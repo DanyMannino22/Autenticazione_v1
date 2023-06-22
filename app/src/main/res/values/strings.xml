@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Autenticazione_v1</string>
+    <string name="login">Login</string>
+    <string name="email">email</string>
+    <string name="password">Password</string>
+    <string name="click_to_register">Click to register</string>
+    <string name="register">Register</string>
+    <string name="click_to_login">Click to Login</string>
+    <string name="logout">Logout</string>
+    <string name="email_universitaria">Email Universitaria</string>
+    <string name="nome">Nome</string>
+    <string name="cognome">Cognome</string>
+    <string name="numero_cellulare">Numero cellulare</string>
+    <string name="sei_in_possesso_di_un_veicolo">Sei in possesso di un veicolo?   </string>
+    <string name="inserisci_foto">Inserisci foto</string>
+    <string name="aggiungi_foto">Aggiungi foto</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="Mappa">mappa</string>
+</resources>

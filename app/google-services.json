@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "344711891142",
+    "project_id": "autenticazione-v2",
+    "firebase_url" :"https://autenticazione-v2-default-rtdb.europe-west1.firebasedatabase.app",
+    "storage_bucket": "autenticazione-v2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344711891142:android:b84444808f84fa041f6fc7",
+        "android_client_info": {
+          "package_name": "com.example.autenticazione_v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqXV6Q2rPOe3YdGUh6BsSgEU0rPqe6Vcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344711891142:android:a46fbf3b702aae4c1f6fc7",
+        "android_client_info": {
+          "package_name": "com.example.autenticazione_v2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqXV6Q2rPOe3YdGUh6BsSgEU0rPqe6Vcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,6 +3,7 @@ package com.example.autenticazione_v1;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -81,7 +82,7 @@ public class HomeFragment extends Fragment {
         */
 
         //inizializzo osm
-        Context ctx = getContext();
+        Context ctx = getContext().getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
     }
 
@@ -104,7 +105,7 @@ public class HomeFragment extends Fragment {
         mapController.setCenter(startPoint);
 
 
-        Drawable markerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.pinpoint); //assegno il marker a tutti i POI
+        Drawable markerDrawable = ContextCompat.getDrawable(getContext().getApplicationContext(), R.drawable.pinpoint); //assegno il marker a tutti i POI
 
         //definisco coordinate di tutti i POI e gli assegno il marker
         GeoPoint Cittadella = new GeoPoint(37525745, 15073806);
@@ -152,7 +153,16 @@ public class HomeFragment extends Fragment {
                                 dialogInterface.dismiss();
                                 replaceFragment(new Prenotazione());
                             }
-                        }).create();
+                        })
+                        .setNegativeButton("Ricerca Passaggio", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                Toast.makeText(getActivity(), "Ricerca Passaggio", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+
+                        .create();
 
                dialog.show();
                 return true; // Handled this event.
@@ -162,7 +172,7 @@ public class HomeFragment extends Fragment {
             public boolean onItemLongPress(int i, OverlayItem overlayItem) {
                 return false;
             }
-        }, getContext());
+        }, getContext().getApplicationContext());
 
         //map.getOverlays().add(locationOverlay);
         map.getOverlays().add(locationOverlay);

@@ -1,12 +1,16 @@
 package com.example.autenticazione_v1;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -79,14 +83,12 @@ public class HomeFragment extends Fragment {
         //inizializzo osm
         Context ctx = getContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-
-}
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
 
         //Inserisco mappa all'interno del fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
@@ -117,20 +119,42 @@ public class HomeFragment extends Fragment {
         OverlayItem overlayTorre = new OverlayItem("Torre biologica", "Catania", TorreBiologica);
         overlayTorre.setMarker(markerDrawable);
 
+        GeoPoint PalazzoScienze = new GeoPoint(37515555, 15095440);
+        OverlayItem overlayPalazzo = new OverlayItem("Palazzo delle Scienze", "Catania", PalazzoScienze);
+        overlayPalazzo.setMarker(markerDrawable);
+
+        GeoPoint PiazzaUniversita = new GeoPoint(37503580, 15086820);
+        OverlayItem overlayPiazza = new OverlayItem("Piazza università", "Catania", PiazzaUniversita);
+        overlayPiazza.setMarker(markerDrawable);
+
 
         //Creo una lista di tutti i punti di interesse, e li aggiungo man mano
         ArrayList<OverlayItem> overlayItemArrayList = new ArrayList<>();
         overlayItemArrayList.add(overlayCittadella);
         overlayItemArrayList.add(overlayMonastero);
         overlayItemArrayList.add(overlayTorre);
+        overlayItemArrayList.add(overlayPalazzo);
+        overlayItemArrayList.add(overlayPiazza);
 
         //Inserisco funzioni che regolano il click dei marker
 
         ItemizedOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(overlayItemArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
+               Toast.makeText(getActivity(), "Località : "+overlayItem.getTitle() /*+"\nItem's Desc : "+overlayItem.getSnippet()*/, Toast.LENGTH_SHORT).show();
 
-               Toast.makeText(getActivity(), "Item's Title : "+overlayItem.getTitle() +"\nItem's Desc : "+overlayItem.getSnippet(), Toast.LENGTH_SHORT).show();
+                AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("Scaegli attività")
+                        .setMessage("Scegli attività per " + overlayItem.getTitle())
+                        .setPositiveButton("Macchina disponibile", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                replaceFragment(new Prenotazione());
+                            }
+                        }).create();
+
+               dialog.show();
                 return true; // Handled this event.
             }
 
@@ -144,6 +168,13 @@ public class HomeFragment extends Fragment {
         map.getOverlays().add(locationOverlay);
 
         return view;
+    }
+
+    private void replaceFragment(Fragment fragment){            //funzione che effettua il cambio del fragment al click
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.commit();
     }
 
 }

@@ -12,6 +12,8 @@ public class Utente {
         this.disponibilitaVeicolo = disponibilitaVeicolo;
     }
 
+    public Utente(){}
+
     public String getNome() {
         return nome;
     }

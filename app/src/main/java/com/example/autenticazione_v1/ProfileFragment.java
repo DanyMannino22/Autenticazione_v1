@@ -2,6 +2,7 @@ package com.example.autenticazione_v1;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 
@@ -13,6 +14,13 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +42,11 @@ public class ProfileFragment extends Fragment {
     FirebaseUser user;
     FirebaseAuth auth;
     TextView t;
+    FirebaseStorage storage;
+    StorageReference storageReference;
+    DatabaseReference mDatabase;
+    Utente u, tmp;
+
 
 
     public ProfileFragment() {
@@ -52,22 +65,17 @@ public class ProfileFragment extends Fragment {
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();  //prende il current user
+
+
+
         //System.out.println(user.getEmail());
 
     }
@@ -78,9 +86,56 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        String email = user.getEmail();     //ricavo inforamzioni utente per accedere ai dati sul db
+        int iend = email.indexOf("@");
+        String user_id = email.substring(0 , iend);   //ID utente
+        String us_id = user_id.substring(0, 1).toUpperCase() + user_id.substring(1);
+
+
+        //System.out.println(path);
+
+        storage = FirebaseStorage.getInstance();     //sistema i riferimenti per accedere ai dati del db da riportare nelle info
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot utenti : snapshot.getChildren()){
+                    //System.out.println(utenti.getKey());
+                    if(utenti.getKey().equals(us_id)){
+                        u = utenti.getValue(Utente.class);
+                        //System.out.println(u.getNome());
+                        //tmp = snapshot.getValue(Utente.class);
+                        break;
+                    }
+                }
+
+                //u = snapshot.getChildren(user_id);
+
+                ProfileFragment.this.onItemsObtained(u);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+       // System.out.println(u.getNome());
+
+
         profilePic = getActivity().findViewById(R.id.profilePict);
+
+
+
+       // System.out.println(u.getNome());
+
         t = view.findViewById(R.id.casellaNome);
-        t.setText("Nome : " + user.getEmail());
+
+            //System.out.println(u.getNome());
+
+
+        //t.setText("Nome : " + u.getNome());
 
 
         //profilePic.setImageBitmap();
@@ -88,4 +143,11 @@ public class ProfileFragment extends Fragment {
         //return inflater.inflate(R.layout.fragment_profile, container, false);
         return view;
     }
+
+    public void onItemsObtained(Utente temp){
+        tmp = u;
+        //System.out.println(tmp.getNome());
+        t.setText("Nome : " + u.getNome());
+    }
+
 }

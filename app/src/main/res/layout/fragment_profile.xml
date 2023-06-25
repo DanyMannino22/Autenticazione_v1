@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:columnCount="6"
-    android:rowCount="10">
+    android:rowCount="11">
 
     <ImageButton
         android:id="@+id/imageButton2"
@@ -15,7 +15,7 @@
         android:layout_height="70dp"
         android:layout_row="5"
         android:layout_column="3"
-        android:background="#A371CF"
+        android:background="@color/white"
         android:contentDescription="@string/TastoBack"
         android:src="?attr/homeAsUpIndicator" />
 
@@ -43,6 +43,7 @@
             android:id="@+id/profilePict"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:scaleType="fitXY"
             tools:src="@tools:sample/avatars" />
     </androidx.cardview.widget.CardView>
 
@@ -56,5 +57,16 @@
         android:gravity="center"
         android:text="Nome:"
         android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/casellaCognome"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_row="9"
+        android:layout_column="3"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Cognome"
+        android:textSize="24sp" />
 
 </GridLayout>

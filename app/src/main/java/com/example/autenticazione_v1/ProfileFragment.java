@@ -1,5 +1,7 @@
 package com.example.autenticazione_v1;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -41,7 +45,7 @@ public class ProfileFragment extends Fragment {
     ImageView profilePic;
     FirebaseUser user;
     FirebaseAuth auth;
-    TextView t;
+    TextView textNome, textCognome;
     FirebaseStorage storage;
     StorageReference storageReference;
     DatabaseReference mDatabase;
@@ -74,8 +78,6 @@ public class ProfileFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();  //prende il current user
 
-
-
         //System.out.println(user.getEmail());
 
     }
@@ -93,9 +95,25 @@ public class ProfileFragment extends Fragment {
 
 
         //System.out.println(path);
-
+        final long ONE_MEGABYTE = 1024*1024;
         storage = FirebaseStorage.getInstance();     //sistema i riferimenti per accedere ai dati del db da riportare nelle info
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        storageReference = storage.getReference("images/"+us_id);
+
+        profilePic = view.findViewById(R.id.profilePict);
+
+        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                profilePic.setImageBitmap(bmp);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("FAIL");
+            }
+        });
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -124,13 +142,13 @@ public class ProfileFragment extends Fragment {
        // System.out.println(u.getNome());
 
 
-        profilePic = getActivity().findViewById(R.id.profilePict);
 
 
 
        // System.out.println(u.getNome());
 
-        t = view.findViewById(R.id.casellaNome);
+        textNome = view.findViewById(R.id.casellaNome);
+        textCognome = view.findViewById(R.id.casellaCognome);
 
             //System.out.println(u.getNome());
 
@@ -145,9 +163,10 @@ public class ProfileFragment extends Fragment {
     }
 
     public void onItemsObtained(Utente temp){
-        tmp = u;
+        tmp = temp;
         //System.out.println(tmp.getNome());
-        t.setText("Nome : " + u.getNome());
+        textNome.setText("Nome : " + tmp.getNome());
+        textCognome.setText("Cognome : " + tmp.getCognome());
     }
 
 }

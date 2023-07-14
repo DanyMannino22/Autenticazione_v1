@@ -1,36 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:columnCount="3"
     android:gravity="center"
     android:orientation="vertical"
+    android:rowCount="16"
     tools:context=".SettingsFragment">
 
+    <ImageButton
+        android:id="@+id/tastoBack"
+        android:layout_width="64dp"
+        android:layout_height="74dp"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:background="@color/white"
+        android:contentDescription="@string/TastoBack"
+        android:src="?attr/homeAsUpIndicator" />
+
     <androidx.cardview.widget.CardView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_gravity="right"
+        android:layout_marginTop="15dp"
         app:cardCornerRadius="40dp">
 
         <ImageView
-            android:id="@+id/profilePic"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
+            android:id="@+id/ProPict"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
             tools:src="@tools:sample/avatars" />
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:id="@+id/textView3"
+        android:layout_width="181dp"
+        android:layout_height="83dp"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_gravity="left"
+        android:gravity="center|right"
+        android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/provaText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:id="@+id/textView4"
+        android:layout_width="259dp"
+        android:layout_height="101dp"
+        android:layout_row="7"
+        android:layout_column="1"
+        android:layout_gravity="fill_horizontal|fill_vertical"
+        android:gravity="center|left"
+        android:text="Impostazioni"
+        android:textSize="40sp"
+        android:textStyle="bold|italic" />
 
-</LinearLayout>
+</GridLayout>

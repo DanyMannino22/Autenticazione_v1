@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());  //Strumento che permette di associale i layout all'oggetto
-
         //setContentView(R.layout.activity_main);
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());            //di default apre il fragmento della home

@@ -170,7 +170,7 @@ public class ProfileFragment extends Fragment {
     public void onItemsObtained(Utente temp){
 
         tmp = temp;
-        //System.out.println(tmp.getNome());                //aggiorno campi con dati utente
+        System.out.println(user.getUid());                //aggiorno campi con dati utente
         textNome.setText("Nome : " + tmp.getNome());
         textCognome.setText("Cognome : " + tmp.getCognome());
         boolean b = tmp.getDisponibilitaVeicolo();

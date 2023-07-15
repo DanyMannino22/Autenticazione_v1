@@ -102,7 +102,7 @@ public class ProfileFragment extends Fragment {
         final long DIM = 2048*2048;
         storage = FirebaseStorage.getInstance();     //sistema i riferimenti per accedere ai dati del db da riportare nelle info
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        storageReference = storage.getReference("images/"+user_id);
+        storageReference = storage.getReference("images/"+user.getUid());
 
         profilePic = view.findViewById(R.id.profilePict);
 
@@ -124,7 +124,7 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot utenti : snapshot.getChildren()){
                     //System.out.println(utenti.getKey());
-                    if(utenti.getKey().equals(user_id)){
+                    if(utenti.getKey().equals(user.getUid())){
                         u = utenti.getValue(Utente.class);          //prendo riferimento utente loggato
                         //System.out.println(u.getNome());
                         //tmp = snapshot.getValue(Utente.class);
@@ -170,7 +170,7 @@ public class ProfileFragment extends Fragment {
     public void onItemsObtained(Utente temp){
 
         tmp = temp;
-        System.out.println(user.getUid());                //aggiorno campi con dati utente
+        //System.out.println(user.getUid());                //aggiorno campi con dati utente
         textNome.setText("Nome : " + tmp.getNome());
         textCognome.setText("Cognome : " + tmp.getCognome());
         boolean b = tmp.getDisponibilitaVeicolo();

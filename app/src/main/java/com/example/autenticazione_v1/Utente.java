@@ -2,13 +2,14 @@ package com.example.autenticazione_v1;
 
 public class Utente {
 
-    private String nome, cognome, cellulare;
+    private String nome, cognome, cellulare, email;
     private boolean disponibilitaVeicolo;
 
-    public Utente(String nome, String cognome, String cellulare, boolean disponibilitaVeicolo) {
+    public Utente(String nome, String cognome, String cellulare, String email, boolean disponibilitaVeicolo) {
         this.nome = nome;
         this.cognome = cognome;
         this.cellulare = cellulare;
+        this.email = email;
         this.disponibilitaVeicolo = disponibilitaVeicolo;
     }
 
@@ -45,4 +46,13 @@ public class Utente {
     public void setDisponibilitaVeicolo(boolean disponibilitaVeicolo) {
         this.disponibilitaVeicolo = disponibilitaVeicolo;
     }
+
+    public String getEmail(){
+        return email;
+    }
+
+    public void setEmail(String email){
+        this.email = email;
+    }
+
 }

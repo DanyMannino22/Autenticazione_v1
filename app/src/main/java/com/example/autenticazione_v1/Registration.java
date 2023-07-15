@@ -148,15 +148,23 @@ public class Registration extends AppCompatActivity {
                 String email, password;
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
+                String verifyEmail = email;
 
-                if(TextUtils.isEmpty(email)){
-                    Toast.makeText(Registration.this, "Enter email", Toast.LENGTH_SHORT).show();
+
+                if(TextUtils.isEmpty(email) || !verifyEmail.substring(verifyEmail.indexOf("@")+1).equals("studium.unict.it")){
+                    Toast.makeText(Registration.this, "Inserisci email universitaria", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     return;
                 }
 
                 if(TextUtils.isEmpty(password)){
-                    Toast.makeText(Registration.this, "Enter password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Registration.this, "Inserisci password valida (min. 6 caratteri)", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                    return;
+                }
+
+                if(foto == null){
+                    Toast.makeText(Registration.this, "Inserisci foto", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     return;
                 }
@@ -167,18 +175,20 @@ public class Registration extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
-                                    Utente u = new Utente(editTextNome.getText().toString(), editTextCognome.getText().toString(), editTextCellulare.getText().toString(), veicolo.isChecked());
-                                    String email = editTextEmail.getText().toString();
-                                    int iend = email.indexOf("@");  //uso codice fiscale come id nel db realtime
-                                    String user_id = email.substring(0 , iend);
+                                    String uid = mAuth.getCurrentUser().getUid();  //recupero id utente
 
-                                    mDatabase.child("users").child(user_id).setValue(u);  //inserisco dati utente nel db realtime
+
+                                    Utente u = new Utente(editTextNome.getText().toString(), editTextCognome.getText().toString(), editTextCellulare.getText().toString(), editTextEmail.getText().toString(), veicolo.isChecked());
+                                    //String email = editTextEmail.getText().toString();
+                                    //int iend = email.indexOf("@");  //uso codice fiscale come id nel db realtime
+                                    //String user_id = email.substring(0 , iend);
+
+                                    mDatabase.child("users").child(uid).setValue(u);  //inserisco dati utente nel db realtime
 
                                     StorageReference ref    //processo per inserimento foto sul db
                                             = storageReference
                                             .child(
-                                                    "images/"
-                                                            + user_id.toString());
+                                                    "images/" + uid);
 
                                     // adding listeners on upload
                                     // or failure of image
@@ -193,11 +203,11 @@ public class Registration extends AppCompatActivity {
                                                             // Image uploaded successfully
                                                             // Dismiss dialog
 
-                                                            Toast
+                                                           /* Toast
                                                                     .makeText(Registration.this,
                                                                             "Image Uploaded!!",
                                                                             Toast.LENGTH_SHORT)
-                                                                    .show();
+                                                                    .show();*/
                                                         }
                                                     })
 
@@ -214,7 +224,7 @@ public class Registration extends AppCompatActivity {
                                                 }
                                             });
 
-                                    Toast.makeText(Registration.this, "Account created.",
+                                    Toast.makeText(Registration.this, "Account creato. Effettua login.",
                                             Toast.LENGTH_SHORT).show();
 
                                 } else {

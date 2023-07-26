@@ -1,18 +1,27 @@
 package com.example.autenticazione_v1;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +43,10 @@ public class SettingsFragment extends Fragment {
     FirebaseUser user;
     FirebaseAuth auth;
     TextView t;
+    Bitmap bmp;
+    FirebaseStorage storage;
+    StorageReference storageReference;
+    Button logout;
 
 
     public SettingsFragment() {
@@ -75,13 +88,46 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+
         // Inflate the layout for this fragment
+        final long DIM = 2048*2048;
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
+        logout = view.findViewById(R.id.LogoutButton);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {    //logut utente con ritorno alla schermata login
+                FirebaseAuth.getInstance().signOut();
+
+                Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
+                startActivity(intent);
+            }
+        });
+
+        String id = user.getEmail();
         profilePic = getActivity().findViewById(R.id.ProPict);
         t = view.findViewById(R.id.textView3);
-        t.setText(user.getEmail());
+        t.setText(id.substring(0, id.indexOf("@")));
 
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference("images/"+user.getUid());
+
+        profilePic = view.findViewById(R.id.ProPict);
+
+        storageReference.getBytes(DIM).addOnSuccessListener(new OnSuccessListener<byte[]>() {    //Scarico foto profilo utente
+            @Override
+            public void onSuccess(byte[] bytes) {
+                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);     //adatto la foto per essere inserita nell'image view
+                profilePic.setImageBitmap(bmp);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("FAIL");
+            }
+        });
 
         //profilePic.setImageBitmap();
 

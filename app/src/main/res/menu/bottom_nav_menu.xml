@@ -10,4 +10,7 @@
     <item android:title="Settings"
         android:icon="@drawable/baseline_settings_24"
         android:id="@+id/settings"/>
+    <item android:title="Notifications"
+        android:icon="@drawable/baseline_notifications_24"
+        android:id="@+id/notifications"/>
 </menu>

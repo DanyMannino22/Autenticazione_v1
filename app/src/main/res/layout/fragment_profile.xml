@@ -6,8 +6,11 @@
     android:id="@+id/GridLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnCount="6"
-    android:rowCount="13">
+    android:background="@drawable/sfondo2"
+    android:backgroundTint="#27FFFFFF"
+    android:backgroundTintMode="src_over"
+    android:columnCount="7"
+    android:rowCount="14">
 
     <ImageButton
         android:id="@+id/tastoBack"
@@ -15,7 +18,7 @@
         android:layout_height="70dp"
         android:layout_row="5"
         android:layout_column="3"
-        android:background="@color/white"
+        android:background="#EEEEEE"
         android:contentDescription="@string/TastoBack"
         android:src="?attr/homeAsUpIndicator" />
 
@@ -55,19 +58,19 @@
         android:layout_column="3"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="Nome:"
-        android:textSize="24sp" />
+        android:paddingLeft="50dp"
+        android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/casellaCognome"
+        android:id="@+id/casellaCellulare"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_row="10"
         android:layout_column="3"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="Cognome:"
-        android:textSize="24sp" />
+        android:paddingLeft="50dp"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textView3"
@@ -77,14 +80,69 @@
         android:layout_column="3" />
 
     <TextView
-        android:id="@+id/casellaAuto"
+        android:id="@+id/casellaMail"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_row="11"
         android:layout_column="3"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="Possessore di Auto: "
+        android:paddingLeft="50dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/casellaAuto"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_row="12"
+        android:layout_column="3"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingLeft="50dp"
         android:textSize="24sp" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="60dp"
+        android:layout_height="31dp"
+        android:layout_row="12"
+        android:layout_column="3"
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="40dp"
+        android:alpha=".7"
+        app:srcCompat="@drawable/auto" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="59dp"
+        android:layout_height="46dp"
+        android:layout_row="9"
+        android:layout_column="3"
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="40dp"
+        android:alpha=".7"
+        app:srcCompat="@drawable/baseline_person_24" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="59dp"
+        android:layout_height="46dp"
+        android:layout_row="10"
+        android:layout_column="3"
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="40dp"
+        android:alpha=".7"
+        app:srcCompat="@drawable/cellulare" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="60dp"
+        android:layout_height="31dp"
+        android:layout_row="11"
+        android:layout_column="3"
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="40dp"
+        android:alpha=".7"
+        app:srcCompat="@drawable/emailicon" />
 
 </GridLayout>

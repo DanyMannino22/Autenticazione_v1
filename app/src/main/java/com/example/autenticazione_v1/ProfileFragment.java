@@ -47,7 +47,7 @@ public class ProfileFragment extends Fragment {
     ImageView profilePic;
     FirebaseUser user;
     FirebaseAuth auth;
-    TextView textNome, textCognome, textAuto;
+    TextView textNome, textCellulare, textMail, textAuto;
     FirebaseStorage storage;
     StorageReference storageReference;
     DatabaseReference mDatabase;
@@ -147,7 +147,8 @@ public class ProfileFragment extends Fragment {
        // System.out.println(u.getNome());
 
         textNome = view.findViewById(R.id.casellaNome);
-        textCognome = view.findViewById(R.id.casellaCognome);
+        textCellulare = view.findViewById(R.id.casellaCellulare);
+        textMail = view.findViewById(R.id.casellaMail);
         textAuto = view.findViewById(R.id.casellaAuto);
         back = view.findViewById(R.id.tastoBack);
 
@@ -168,16 +169,20 @@ public class ProfileFragment extends Fragment {
     }
 
     public void onItemsObtained(Utente temp){
-
+        String email;
         tmp = temp;
         //System.out.println(user.getUid());                //aggiorno campi con dati utente
-        textNome.setText("Nome : " + tmp.getNome());
-        textCognome.setText("Cognome : " + tmp.getCognome());
+        textNome.setText(tmp.getNome() + " " + tmp.getCognome());
+        textCellulare.setText(tmp.getCellulare());
+
+        email = tmp.getEmail();
+        textMail.setText(email.substring(0, email.indexOf("@")));
+
         boolean b = tmp.getDisponibilitaVeicolo();
         if(b)
-            textAuto.setText("Possessore di Auto : Sì");
+            textAuto.setText("Disponibile");
         else
-            textAuto.setText("Possessore di Auto : No");
+            textAuto.setText("NON Disponibile");
     }
 
 }

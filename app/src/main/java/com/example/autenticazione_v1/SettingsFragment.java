@@ -1,5 +1,7 @@
 package com.example.autenticazione_v1;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,11 +17,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -46,7 +51,8 @@ public class SettingsFragment extends Fragment {
     Bitmap bmp;
     FirebaseStorage storage;
     StorageReference storageReference;
-    Button logout;
+    Button logout, changeSettings;
+    DatabaseReference mDatabase;
 
 
     public SettingsFragment() {
@@ -94,6 +100,41 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         final long DIM = 2048*2048;
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid()).child("disponibilitaVeicolo");
+
+        changeSettings = view.findViewById(R.id.CambiaImpostazioni);
+
+        changeSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("Impostazioni veicolo")
+                        .setMessage("Seleziona disponibilità auto")
+                        .setPositiveButton("Disponibile", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                mDatabase.setValue(true);
+                                Toast.makeText(getActivity(), "Modifica effettuata con successo", Toast.LENGTH_SHORT).show();
+                                //;
+                            }
+                        })
+                        .setNegativeButton("NON Disponibile", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                mDatabase.setValue(false);
+                                Toast.makeText(getActivity(), "Modifica effettuata con successo", Toast.LENGTH_SHORT).show();
+                                //;
+                            }
+                        })
+
+                        .create();
+
+                dialog.show();
+            }
+        });
 
         logout = view.findViewById(R.id.LogoutButton);
         logout.setOnClickListener(new View.OnClickListener() {

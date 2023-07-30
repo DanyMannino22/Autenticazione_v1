@@ -10,11 +10,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +52,7 @@ public class SettingsFragment extends Fragment {
     FirebaseStorage storage;
     StorageReference storageReference;
     Button logout, changeSettings;
+    ImageButton back;
     DatabaseReference mDatabase;
 
 
@@ -102,6 +103,15 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid()).child("disponibilitaVeicolo");
+
+        back = view.findViewById(R.id.tastoBack2);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         changeSettings = view.findViewById(R.id.CambiaImpostazioni);
 
@@ -169,6 +179,9 @@ public class SettingsFragment extends Fragment {
                 System.out.println("FAIL");
             }
         });
+
+
+
 
         //profilePic.setImageBitmap();
 

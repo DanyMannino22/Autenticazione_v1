@@ -1,14 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_row="15"
+    android:background="@drawable/sfondo2"
+    android:backgroundTint="#27FFFFFF"
+    android:backgroundTintMode="src_over"
+    android:columnCount="3"
     tools:context=".Prenotazione">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/textView16"
+        android:layout_width="261dp"
+        android:layout_height="48dp"
+        android:layout_row="7"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Orario Partenza:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
-</FrameLayout>
+    <Spinner
+        android:id="@+id/spinnerMinuti"
+        android:layout_width="132dp"
+        android:layout_height="48dp"
+        android:layout_row="8"
+        android:layout_column="1"
+        android:layout_gravity="right|top"
+        android:dropDownWidth="match_parent" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="261dp"
+        android:layout_height="48dp"
+        android:layout_row="9"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Posti Disponibili:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textDestinazione"
+        android:layout_width="261dp"
+        android:layout_height="48dp"
+        android:layout_row="6"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="261dp"
+        android:layout_height="48dp"
+        android:layout_row="5"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Destinazione:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="264dp"
+        android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:gravity="center"
+        android:text="Dettagli Tragitto"
+        android:textSize="30sp"
+        android:textStyle="bold|italic" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:backgroundTint="#EDEDED"
+        android:src="?attr/homeAsUpIndicator" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="1" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="261dp"
+        android:layout_height="48dp"
+        android:layout_row="3"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Partenza:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spinnerPartenza"
+        android:layout_width="262dp"
+        android:layout_height="wrap_content"
+        android:layout_row="4"
+        android:layout_column="1"
+        android:layout_gravity="center|top"
+        android:entries="@array/Partenze"
+        android:minHeight="48dp" />
+
+    <Spinner
+        android:id="@+id/spinnerOre"
+        android:layout_width="136dp"
+        android:layout_height="48dp"
+        android:layout_row="8"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:dropDownWidth="match_parent" />
+
+    <Spinner
+        android:id="@+id/spinnerPosti"
+        android:layout_width="164dp"
+        android:layout_height="wrap_content"
+        android:layout_row="10"
+        android:layout_column="1"
+        android:layout_gravity="center|top"
+        android:dropDownWidth="match_parent"
+        android:minHeight="32dp" />
+
+</GridLayout>

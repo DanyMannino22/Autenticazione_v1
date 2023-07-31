@@ -34,6 +34,8 @@ import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
+    public String destinazione;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -151,6 +153,7 @@ public class HomeFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
+                                destinazione = overlayItem.getTitle();
                                 replaceFragment(new Prenotazione());
                             }
                         })
@@ -184,6 +187,9 @@ public class HomeFragment extends Fragment {
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
+        Bundle b = new Bundle();
+        b.putString("key", destinazione);
+        fragment.setArguments(b);
         fragmentTransaction.commit();
     }
 

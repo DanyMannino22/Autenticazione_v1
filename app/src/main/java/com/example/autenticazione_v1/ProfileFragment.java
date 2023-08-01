@@ -101,7 +101,7 @@ public class ProfileFragment extends Fragment {
         //System.out.println(path);
         final long DIM = 2048*2048;
         storage = FirebaseStorage.getInstance();     //sistema i riferimenti per accedere ai dati del db da riportare nelle info
-        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
         storageReference = storage.getReference("images/"+user.getUid());
 
         profilePic = view.findViewById(R.id.profilePict);
@@ -122,7 +122,7 @@ public class ProfileFragment extends Fragment {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot utenti : snapshot.getChildren()){
+                /*for(DataSnapshot utenti : snapshot.getChildren()){
                     //System.out.println(utenti.getKey());
                     if(utenti.getKey().equals(user.getUid())){
                         u = utenti.getValue(Utente.class);          //prendo riferimento utente loggato
@@ -130,9 +130,11 @@ public class ProfileFragment extends Fragment {
                         //tmp = snapshot.getValue(Utente.class);
                         break;
                     }
-                }
+                }*/
+
 
                 //u = snapshot.getChildren(user_id);
+                u = snapshot.getValue(Utente.class);
 
                 ProfileFragment.this.onItemsObtained(u);           //uso questa funzione per evitare di ottenere oggetto null
             }
@@ -151,6 +153,7 @@ public class ProfileFragment extends Fragment {
         textMail = view.findViewById(R.id.casellaMail);
         textAuto = view.findViewById(R.id.casellaAuto);
         back = view.findViewById(R.id.tastoBack);
+
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override

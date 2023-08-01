@@ -1,15 +1,27 @@
 package com.example.autenticazione_v1;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +33,13 @@ public class Prenotazione extends Fragment {
     public String dest, partenza;
     private TextView destinazione;
     private Spinner spinner, spinnerOre, spinnerMinuti, spinnerPosti;
+
+    Button caricaRichiesta;
+
+    FirebaseUser user;
+    FirebaseAuth auth;
+    DatabaseReference mDatabase;
+    TextView annulla;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,9 +79,8 @@ public class Prenotazione extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        else{
-
-        }
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();  //prende il current user
     }
 
     @Override
@@ -71,6 +89,8 @@ public class Prenotazione extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_prenotazione, container, false);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference("richieste");   //MODIFICA
 
         destinazione = view.findViewById(R.id.textDestinazione);
 
@@ -103,11 +123,54 @@ public class Prenotazione extends Fragment {
         // Apply the adapter to the spinner
         spinnerPosti.setAdapter(adapter3);
 
-        Bundle b = this.getArguments();
+        Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
         dest = b.getString("key", dest);
         System.out.println(dest);
-
         destinazione.setText(dest);
+
+        annulla = view.findViewById(R.id.annulla);
+        annulla.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        caricaRichiesta = view.findViewById(R.id.ConfermaDettagli);
+
+        caricaRichiesta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String part;
+                int oraPart, minutiPart, nPasseggeri;
+
+                part = spinner.getSelectedItem().toString();
+
+                if(part.equals(dest)){
+                    Toast.makeText(getActivity(), "Partenza e destinazione non possono coincidere", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()));
+                mDatabase.push().setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getActivity(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getActivity(), "Errore durante caricamento richiesta", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
 
 
         return view;

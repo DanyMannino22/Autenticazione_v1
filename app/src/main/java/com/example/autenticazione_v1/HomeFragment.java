@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -18,6 +19,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -35,6 +44,13 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
 
     public String destinazione;
+
+    FirebaseUser user;
+    FirebaseAuth auth;
+
+    DatabaseReference mDatabase;
+    Utente u;
+    private boolean MACCHINA_DISPONIBILE = false;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,6 +99,9 @@ public class HomeFragment extends Fragment {
         }
         */
 
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+
         //inizializzo osm
         Context ctx = getContext().getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -96,6 +115,34 @@ public class HomeFragment extends Fragment {
         //Inserisco mappa all'interno del fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         MapView map = (MapView) view.findViewById(R.id.mapView);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());    //Verifico se utente ha macchina disponibile
+
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                /*for(DataSnapshot utenti : snapshot.getChildren()){
+                    //System.out.println(utenti.getKey());
+                    if(utenti.getKey().equals(user.getUid())){
+                        u = utenti.getValue(Utente.class);          //prendo riferimento utente loggato
+                        //System.out.println(u.getNome());
+                        //tmp = snapshot.getValue(Utente.class);
+                        break;
+                    }
+                }*/
+
+
+                //u = snapshot.getChildren(user_id);
+                u = snapshot.getValue(Utente.class);
+
+                HomeFragment.this.onItemsObtained(u);           //uso questa funzione per evitare di ottenere oggetto null
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                System.out.println("FAIL DATABASE");
+            }
+        });
+
 
         //setto i paramteri della mappa con centro puntato su Catania
         map.setTileSource(TileSourceFactory.MAPNIK);
@@ -144,14 +191,20 @@ public class HomeFragment extends Fragment {
         ItemizedOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(overlayItemArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
-               Toast.makeText(getActivity(), "Località : "+overlayItem.getTitle() /*+"\nItem's Desc : "+overlayItem.getSnippet()*/, Toast.LENGTH_SHORT).show();
+               //Toast.makeText(getActivity(), "Località : "+overlayItem.getTitle() /*+"\nItem's Desc : "+overlayItem.getSnippet()*/, Toast.LENGTH_SHORT).show();
 
                 AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                        .setTitle("Scaegli attività")
-                        .setMessage("Scegli attività per " + overlayItem.getTitle())
+                        .setTitle("Scegli attività")
+                        .setMessage("Destinazione:  " + overlayItem.getTitle())
                         .setPositiveButton("Macchina disponibile", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+
+                                if(!MACCHINA_DISPONIBILE){
+                                    Toast.makeText(getActivity(), "Macchina non disponibile, cambia impostazioni", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
                                 dialogInterface.dismiss();
                                 destinazione = overlayItem.getTitle();
                                 replaceFragment(new Prenotazione());
@@ -191,6 +244,12 @@ public class HomeFragment extends Fragment {
         b.putString("key", destinazione);
         fragment.setArguments(b);
         fragmentTransaction.commit();
+    }
+
+    public void onItemsObtained(Utente temp) {
+        if(temp.getDisponibilitaVeicolo()){
+            MACCHINA_DISPONIBILE = true;
+        }
     }
 
 }

@@ -153,7 +153,7 @@ public class Prenotazione extends Fragment {
                     return;
                 }
 
-                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()));
+                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()));
                 mDatabase.push().setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -170,8 +170,6 @@ public class Prenotazione extends Fragment {
                 });
             }
         });
-
-
 
         return view;
     }

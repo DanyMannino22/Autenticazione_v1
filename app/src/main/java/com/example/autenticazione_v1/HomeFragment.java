@@ -215,7 +215,8 @@ public class HomeFragment extends Fragment {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
                                 Toast.makeText(getActivity(), "Ricerca Passaggio", Toast.LENGTH_SHORT).show();
-                                replaceFragment(new Ricerche());
+                                destinazione = overlayItem.getTitle();
+                                replaceFragment(new FiltroRicerche());
                             }
                         })
 
@@ -237,7 +238,7 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void replaceFragment(Fragment fragment){            //funzione che effettua il cambio del fragment al click
+    private void replaceFragment(Fragment fragment){            //funzione che effettua il cambio del fragment al click di macchina disponibile
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);

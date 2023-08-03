@@ -42,6 +42,7 @@ public class Ricerche extends Fragment {
     DatabaseReference mDatabase;
     Utente u;
 
+    String destinazione, partenza, oraInizio, oraFine;
     LinearLayout layout;
     int i = 0, cont;
     Richieste []r;
@@ -83,6 +84,22 @@ public class Ricerche extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ricerche, container, false);
         layout = view.findViewById(R.id.layout_ricerche);
+
+
+        Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
+        partenza = b.getString("partenza", partenza);
+        System.out.println(partenza);
+
+        destinazione = b.getString("destinazione", destinazione);
+        System.out.println(destinazione);
+
+        oraInizio = b.getString("oraInizio", oraInizio);
+        System.out.println(oraInizio);
+
+        oraFine = b.getString("oraFine", oraFine);
+        System.out.println(oraFine);
+        //destinazione.setText(dest);
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference("richieste");
 

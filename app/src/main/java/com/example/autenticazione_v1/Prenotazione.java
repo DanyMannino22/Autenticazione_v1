@@ -93,6 +93,10 @@ public class Prenotazione extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference("richieste");   //MODIFICA
 
         destinazione = view.findViewById(R.id.textDestinazione);
+        Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
+        dest = b.getString("key", dest);
+        //System.out.println(dest);
+        destinazione.setText(dest);
 
         spinner = view.findViewById(R.id.spinnerPartenza);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.Partenze, android.R.layout.simple_spinner_item);
@@ -123,10 +127,7 @@ public class Prenotazione extends Fragment {
         // Apply the adapter to the spinner
         spinnerPosti.setAdapter(adapter3);
 
-        Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
-        dest = b.getString("key", dest);
-        System.out.println(dest);
-        destinazione.setText(dest);
+
 
         annulla = view.findViewById(R.id.annulla);
         annulla.setOnClickListener(new View.OnClickListener() {
@@ -144,7 +145,6 @@ public class Prenotazione extends Fragment {
             @Override
             public void onClick(View view) {
                 String part;
-                int oraPart, minutiPart, nPasseggeri;
 
                 part = spinner.getSelectedItem().toString();
 

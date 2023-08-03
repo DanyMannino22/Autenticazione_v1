@@ -159,6 +159,7 @@ public class Prenotazione extends Fragment {
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(getActivity(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                        
                         startActivity(intent);
 
                     }

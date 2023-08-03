@@ -215,6 +215,7 @@ public class HomeFragment extends Fragment {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.dismiss();
                                 Toast.makeText(getActivity(), "Ricerca Passaggio", Toast.LENGTH_SHORT).show();
+                                replaceFragment(new Ricerche());
                             }
                         })
 

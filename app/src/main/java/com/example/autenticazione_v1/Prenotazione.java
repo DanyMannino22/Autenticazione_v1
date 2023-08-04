@@ -20,8 +20,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,11 +38,12 @@ public class Prenotazione extends Fragment {
     private Spinner spinner, spinnerOre, spinnerMinuti, spinnerPosti;
 
     Button caricaRichiesta;
-
+    String nomeCognome;
     FirebaseUser user;
     FirebaseAuth auth;
-    DatabaseReference mDatabase;
+    DatabaseReference mDatabase, userReference;
     TextView annulla;
+    Utente u;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -90,7 +94,22 @@ public class Prenotazione extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_prenotazione, container, false);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference("richieste");   //MODIFICA
+        mDatabase = FirebaseDatabase.getInstance().getReference("richieste");
+
+        userReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+
+        userReference.addValueEventListener(new ValueEventListener() {              //Ricavo nomee cognome autista
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                u = snapshot.getValue(Utente.class);
+                Prenotazione.this.onItemsObtained(u);           //uso questa funzione per evitare di ottenere oggetto null
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                System.out.println("FAIL DATABASE");
+            }
+        });
 
         destinazione = view.findViewById(R.id.textDestinazione);
         Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
@@ -153,7 +172,7 @@ public class Prenotazione extends Fragment {
                     return;
                 }
 
-                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()));
+                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome);
                 mDatabase.push().setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -173,5 +192,9 @@ public class Prenotazione extends Fragment {
         });
 
         return view;
+    }
+
+    public void onItemsObtained(Utente temp) {
+        nomeCognome = temp.getNome() + " " + temp.getCognome();
     }
 }

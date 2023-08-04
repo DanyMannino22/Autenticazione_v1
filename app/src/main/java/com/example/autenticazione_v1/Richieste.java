@@ -2,7 +2,7 @@ package com.example.autenticazione_v1;
 
 public class Richieste {
 
-    private String autista, passeggero1, passeggero2, passeggero3, passeggero4, partenza, destinazione;
+    private String autista, passeggero1, passeggero2, passeggero3, passeggero4, partenza, destinazione, nomeAutista;
     private int posti_auto, ora_Partenza, minutiPartenza, posti_didponibili;
 
     public String getAutista() {
@@ -11,6 +11,14 @@ public class Richieste {
 
     public int getPosti_didponibili() {
         return posti_didponibili;
+    }
+
+    public String getNomeAutista() {
+        return nomeAutista;
+    }
+
+    public void setNomeAutista(String nomeAutista) {
+        this.nomeAutista = nomeAutista;
     }
 
     public void setPosti_didponibili(int posti_didponibili) {
@@ -110,7 +118,7 @@ public class Richieste {
     public Richieste() {
     }
 
-    public Richieste(String autista, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_didponibili) {
+    public Richieste(String autista, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_didponibili, String nomeAutista) {
         this.autista = autista;
         this.partenza = partenza;
         this.destinazione = destinazione;
@@ -118,5 +126,6 @@ public class Richieste {
         this.ora_Partenza = ora_Partenza;
         this.minutiPartenza = minutiPartenza;
         this.posti_didponibili = posti_auto;
+        this.nomeAutista = nomeAutista;
     }
 }

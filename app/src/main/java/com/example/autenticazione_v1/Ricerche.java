@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,6 +18,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -109,10 +110,11 @@ public class Ricerche extends Fragment {
                 cont = (int) snapshot.getChildrenCount();
                 r = new Richieste[cont];
                 for (DataSnapshot richieste : snapshot.getChildren()) {
-                    //System.out.println(utenti.getKey());
-                    r[i] = richieste.getValue(Richieste.class);
-                    i++;
 
+                    //System.out.println(utenti.getKey());
+
+                        r[i] = richieste.getValue(Richieste.class);
+                        i++;
                     //addRichiesta();
                 }
 
@@ -134,7 +136,10 @@ public class Ricerche extends Fragment {
         int j;
 
         for(j = 0; j < n; j++){
-            addRichiesta(tmp[j]);
+            if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine)){
+                addRichiesta(tmp[j]);
+            }
+            //addRichiesta(tmp[j]);
         }
     }
 
@@ -147,6 +152,9 @@ public class Ricerche extends Fragment {
 
         TextView arrivo = v.findViewById(R.id.arrivoRicerca);
         arrivo.setText(t.getDestinazione());
+
+        TextView autista = v.findViewById(R.id.autistaRicerca);
+        autista.setText(t.getNomeAutista());
 
         TextView orario = v.findViewById(R.id.orarioRicerca);
         orario.setText("  " + t.getOra_Partenza() + " : " + t.getMinutiPartenza());

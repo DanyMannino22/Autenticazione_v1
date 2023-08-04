@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
     android:background="@drawable/sfondo2"
-    android:backgroundTint="#27FFFFFF"
+    android:backgroundTint="#4AFFFFFF"
     android:backgroundTintMode="src_over"
     android:orientation="vertical"
     android:scrollbars="vertical"
@@ -15,7 +15,10 @@
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="0dp">
+        android:layout_marginBottom="0dp"
+        android:fadeScrollbars="true"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="20dp">
 
         <LinearLayout
             android:id="@+id/layout_ricerche"
@@ -28,8 +31,16 @@
 
     <TextView
         android:id="@+id/textView21"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_width="312dp"
+        android:layout_height="78dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="49dp"
+        android:gravity="center"
+        android:text="Risultati ricerca"
+        android:textSize="30sp"
+        android:textStyle="bold|italic" />
 
 </RelativeLayout>

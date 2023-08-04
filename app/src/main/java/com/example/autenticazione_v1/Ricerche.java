@@ -1,5 +1,6 @@
 package com.example.autenticazione_v1;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,8 +9,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,13 +44,14 @@ public class Ricerche extends Fragment {
     FirebaseUser user;
     FirebaseAuth auth;
 
-    DatabaseReference mDatabase;
+    DatabaseReference mDatabase, acceptReference;
     Utente u;
 
     String destinazione, partenza, oraInizio, oraFine;
     LinearLayout layout;
-    int i = 0, cont;
+    int cont, nRichiesteCompatibili = 0;
     Richieste []r;
+    Richieste []valide;
 
     public Ricerche() {
         // Required empty public constructor
@@ -102,6 +107,9 @@ public class Ricerche extends Fragment {
         //destinazione.setText(dest);
 
 
+        acceptReference = FirebaseDatabase.getInstance().getReference("richieste");
+
+
         mDatabase = FirebaseDatabase.getInstance().getReference("richieste");
 
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -109,10 +117,9 @@ public class Ricerche extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 cont = (int) snapshot.getChildrenCount();
                 r = new Richieste[cont];
+                int i = 0;
                 for (DataSnapshot richieste : snapshot.getChildren()) {
-
                     //System.out.println(utenti.getKey());
-
                         r[i] = richieste.getValue(Richieste.class);
                         i++;
                     //addRichiesta();
@@ -126,6 +133,8 @@ public class Ricerche extends Fragment {
             }
         });
 
+
+
        // for(int i = 0; i < 5; i++){
          //   addRichiesta();
         //}
@@ -133,14 +142,29 @@ public class Ricerche extends Fragment {
     }
 
     public void onItemObtained(Richieste []tmp, int n){
-        int j;
 
-        for(j = 0; j < n; j++){
-            if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine)){
+        int j;
+        for(j = 0; j < n; j++){         //Aggiungo richieste compatibili ai filtri applicati
+            if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0){
+                nRichiesteCompatibili++;
                 addRichiesta(tmp[j]);
+
             }
-            //addRichiesta(tmp[j]);
         }
+
+        if(nRichiesteCompatibili == 0){     //Se non ci sono richieste compatibili compare un messaggio che avverte utente
+            RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            TextView text = new TextView(this.getContext());
+            text.setLayoutParams(p);
+            text.setHeight(110);
+            text.setTextSize(20);
+            text.setPadding(10, 15,0, 0);
+            text.setText("Nessuna richiesta compatibile trovata");
+
+            layout.addView(text);
+            return;
+        }
+
     }
 
 
@@ -158,6 +182,63 @@ public class Ricerche extends Fragment {
 
         TextView orario = v.findViewById(R.id.orarioRicerca);
         orario.setText("  " + t.getOra_Partenza() + " : " + t.getMinutiPartenza());
+
+        Button b = v.findViewById(R.id.accettaPassaggio);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //System.out.println(t.getAutista());
+                int temp = t.getPosti_disponibili();
+
+                mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
+                Toast.makeText(getActivity(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+
+
+
+                /*acceptReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
+
+                        Toast.makeText(getActivity(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });*/
+
+
+               /* mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                       for (DataSnapshot r : snapshot.getChildren()) {
+                            if(r.getValue(Richieste.class).getID().equals(t.getID())){
+                                System.out.println(r.getValue(Richieste.class).getID() + " " + t.getID());
+                                r.getValue(Richieste.class).setPosti_didponibili(0);
+                                return;
+                            }
+                        }
+
+                        Toast.makeText(getActivity(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });*/
+            }
+        });
 
         v.findViewById(R.id.textView17);
         layout.addView(v);

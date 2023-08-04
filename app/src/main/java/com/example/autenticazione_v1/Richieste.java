@@ -2,15 +2,23 @@ package com.example.autenticazione_v1;
 
 public class Richieste {
 
-    private String autista, passeggero1, passeggero2, passeggero3, passeggero4, partenza, destinazione, nomeAutista;
-    private int posti_auto, ora_Partenza, minutiPartenza, posti_didponibili;
+    private String autista, passeggero1, passeggero2, passeggero3, passeggero4, partenza, destinazione, nomeAutista,  ID;
+    private int posti_auto, ora_Partenza, minutiPartenza, posti_disponibili;
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
 
     public String getAutista() {
         return autista;
     }
 
-    public int getPosti_didponibili() {
-        return posti_didponibili;
+    public int getPosti_disponibili() {
+        return posti_disponibili;
     }
 
     public String getNomeAutista() {
@@ -21,8 +29,8 @@ public class Richieste {
         this.nomeAutista = nomeAutista;
     }
 
-    public void setPosti_didponibili(int posti_didponibili) {
-        this.posti_didponibili = posti_didponibili;
+    public void setPosti_disponibili(int posti_disponibili) {
+        this.posti_disponibili = posti_disponibili;
     }
 
     public void setAutista(String autista) {
@@ -101,7 +109,7 @@ public class Richieste {
         this.minutiPartenza = minutiPartenza;
     }
 
-    public Richieste(String autista, String passeggero1, String passeggero2, String passeggero3, String passeggero4, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_didponibili) {
+    public Richieste(String autista, String passeggero1, String passeggero2, String passeggero3, String passeggero4, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_disponibili) {
         this.autista = autista;
         this.passeggero1 = passeggero1;
         this.passeggero2 = passeggero2;
@@ -112,20 +120,21 @@ public class Richieste {
         this.posti_auto = posti_auto;
         this.ora_Partenza = ora_Partenza;
         this.minutiPartenza = minutiPartenza;
-        this.posti_didponibili = posti_auto;
+        this.posti_disponibili = posti_auto;
     }
 
     public Richieste() {
     }
 
-    public Richieste(String autista, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_didponibili, String nomeAutista) {
+    public Richieste(String autista, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_disponibili, String nomeAutista, String ID) {
         this.autista = autista;
         this.partenza = partenza;
         this.destinazione = destinazione;
         this.posti_auto = posti_auto;
         this.ora_Partenza = ora_Partenza;
         this.minutiPartenza = minutiPartenza;
-        this.posti_didponibili = posti_auto;
+        this.posti_disponibili = posti_auto;
         this.nomeAutista = nomeAutista;
+        this.ID = ID;
     }
 }

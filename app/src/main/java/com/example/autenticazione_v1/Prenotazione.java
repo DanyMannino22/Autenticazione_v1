@@ -41,7 +41,7 @@ public class Prenotazione extends Fragment {
     String nomeCognome;
     FirebaseUser user;
     FirebaseAuth auth;
-    DatabaseReference mDatabase, userReference;
+    DatabaseReference mDatabase, userReference, idReference;
     TextView annulla;
     Utente u;
 
@@ -94,7 +94,10 @@ public class Prenotazione extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_prenotazione, container, false);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference("richieste");
+        //mDatabase = FirebaseDatabase.getInstance().getReference("richieste");
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
 
         userReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
@@ -172,13 +175,30 @@ public class Prenotazione extends Fragment {
                     return;
                 }
 
-                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome);
-                mDatabase.push().setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
+                //Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, "");
+
+                idReference = mDatabase.child("richieste");
+                String key = idReference.push().getKey(); //This is the value of your key
+                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, key);
+                idReference.child(key).setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(getActivity(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
+
                         Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                        
+                        startActivity(intent);
+                    }
+                });
+
+                /*mDatabase.push().setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getActivity(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
+
+
+
+
+                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
                         startActivity(intent);
 
                     }
@@ -187,7 +207,7 @@ public class Prenotazione extends Fragment {
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(getActivity(), "Errore durante caricamento richiesta", Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
             }
         });
 

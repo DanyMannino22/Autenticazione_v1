@@ -21,9 +21,9 @@
     <string name="TastoBack">TastoBack</string>
 
     <string-array name="Partenze">
-        <item>Cittadella Universitaria</item>
+        <item>Cittadella universitaria</item>
         <item>Monastero Benedettini</item>
-        <item>Torre Biologica</item>
+        <item>Torre biologica</item>
         <item>Palazzo delle Scienze</item>
         <item>Piazza università</item>
     </string-array>

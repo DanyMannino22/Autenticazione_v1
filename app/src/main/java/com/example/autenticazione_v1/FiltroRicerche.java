@@ -104,8 +104,13 @@ public class FiltroRicerche extends Fragment {
         annulla.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+// Replace whatever is in the fragment_container view with this fragment,
+// and add the transaction to the back stack if needed
+                transaction.replace(R.id.frame_layout, new HomeFragment());
+// Commit the transaction
+                transaction.commit();
             }
         });
 

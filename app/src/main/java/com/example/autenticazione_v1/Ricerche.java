@@ -1,11 +1,16 @@
 package com.example.autenticazione_v1;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +88,6 @@ public class Ricerche extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,7 +109,6 @@ public class Ricerche extends Fragment {
         oraFine = b.getString("oraFine", oraFine);
         System.out.println(oraFine);
         //destinazione.setText(dest);
-
 
         acceptReference = FirebaseDatabase.getInstance().getReference("richieste");
 
@@ -193,9 +196,20 @@ public class Ricerche extends Fragment {
                 mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
                 Toast.makeText(getActivity(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
 
+
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+
+// Replace whatever is in the fragment_container view with this fragment,
+// and add the transaction to the back stack if needed
+                transaction.replace(R.id.frame_layout, new HomeFragment());
+
+// Commit the transaction
+                transaction.commit();
+
+/*
                 Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
                 startActivity(intent);
-
+*/
 
 
                 /*acceptReference.addValueEventListener(new ValueEventListener() {
@@ -242,5 +256,9 @@ public class Ricerche extends Fragment {
 
         v.findViewById(R.id.textView17);
         layout.addView(v);
+    }
+
+    public  void closeFragment(){
+
     }
 }

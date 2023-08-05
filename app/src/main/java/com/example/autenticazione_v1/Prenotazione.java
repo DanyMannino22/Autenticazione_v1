@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,7 +102,7 @@ public class Prenotazione extends Fragment {
 
         userReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
-        userReference.addValueEventListener(new ValueEventListener() {              //Ricavo nomee cognome autista
+        userReference.addValueEventListener(new ValueEventListener() {              //Ricavo nome e cognome autista
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -185,8 +186,18 @@ public class Prenotazione extends Fragment {
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(getActivity(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
 
+                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+
+// Replace whatever is in the fragment_container view with this fragment,
+// and add the transaction to the back stack if needed
+                        transaction.replace(R.id.frame_layout, new HomeFragment());
+// Commit the transaction
+                        transaction.commit();
+/*
                         Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
                         startActivity(intent);
+
+ */
                     }
                 });
 

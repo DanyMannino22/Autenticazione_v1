@@ -254,4 +254,8 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
 }

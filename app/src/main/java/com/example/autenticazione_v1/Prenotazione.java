@@ -172,7 +172,7 @@ public class Prenotazione extends Fragment {
                 part = spinner.getSelectedItem().toString();
 
                 if(part.equals(dest)){
-                    Toast.makeText(getActivity(), "Partenza e destinazione non possono coincidere", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Partenza e destinazione non possono coincidere", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -184,7 +184,7 @@ public class Prenotazione extends Fragment {
                 idReference.child(key).setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getActivity(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
 
                         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
 

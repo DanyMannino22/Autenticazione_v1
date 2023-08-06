@@ -128,7 +128,7 @@ public class Ricerche extends Fragment {
                     //addRichiesta();
                 }
 
-                Ricerche.this.onItemObtained(r, cont);
+                Ricerche.this.onItemObtained(r, cont, inflater);
             }
 
             public void onCancelled(@NonNull DatabaseError error) {
@@ -137,20 +137,16 @@ public class Ricerche extends Fragment {
         });
 
 
-
-       // for(int i = 0; i < 5; i++){
-         //   addRichiesta();
-        //}
         return view;
     }
 
-    public void onItemObtained(Richieste []tmp, int n){
+    public void onItemObtained(Richieste []tmp, int n, LayoutInflater inflater){
 
         int j;
         for(j = 0; j < n; j++){         //Aggiungo richieste compatibili ai filtri applicati
             if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0){
                 nRichiesteCompatibili++;
-                addRichiesta(tmp[j]);
+                addRichiesta(tmp[j], inflater);
 
             }
         }
@@ -171,8 +167,8 @@ public class Ricerche extends Fragment {
     }
 
 
-    public void addRichiesta(Richieste t){
-        View v = getLayoutInflater().inflate(R.layout.layout_richieste, null);
+    public void addRichiesta(Richieste t, LayoutInflater inflater){
+        View v = inflater.inflate(R.layout.layout_richieste, null);
 
         TextView partenza = v.findViewById(R.id.partenzaRicerca);
         partenza.setText(t.getPartenza());
@@ -194,7 +190,7 @@ public class Ricerche extends Fragment {
                 int temp = t.getPosti_disponibili();
 
                 mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
-                Toast.makeText(getActivity(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
 
 
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
@@ -210,23 +206,6 @@ public class Ricerche extends Fragment {
                 Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
                 startActivity(intent);
 */
-
-
-                /*acceptReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
-
-                        Toast.makeText(getActivity(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });*/
 
 
                /* mDatabase.addValueEventListener(new ValueEventListener() {
@@ -258,7 +237,4 @@ public class Ricerche extends Fragment {
         layout.addView(v);
     }
 
-    public  void closeFragment(){
-
-    }
 }

@@ -4,6 +4,7 @@ public class Richieste {
 
     private String autista, passeggero1, passeggero2, passeggero3, passeggero4, partenza, destinazione, nomeAutista,  ID;
     private int posti_auto, ora_Partenza, minutiPartenza, posti_disponibili;
+    private int giorno, mese, anno;
 
     public String getID() {
         return ID;
@@ -15,6 +16,30 @@ public class Richieste {
 
     public String getAutista() {
         return autista;
+    }
+
+    public int getGiorno() {
+        return giorno;
+    }
+
+    public void setGiorno(int giorno) {
+        this.giorno = giorno;
+    }
+
+    public int getMese() {
+        return mese;
+    }
+
+    public void setMese(int mese) {
+        this.mese = mese;
+    }
+
+    public int getAnno() {
+        return anno;
+    }
+
+    public void setAnno(int anno) {
+        this.anno = anno;
     }
 
     public int getPosti_disponibili() {
@@ -126,7 +151,7 @@ public class Richieste {
     public Richieste() {
     }
 
-    public Richieste(String autista, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_disponibili, String nomeAutista, String ID) {
+    public Richieste(String autista, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_disponibili, String nomeAutista, String ID, int giorno, int mese, int anno) {
         this.autista = autista;
         this.partenza = partenza;
         this.destinazione = destinazione;
@@ -136,5 +161,8 @@ public class Richieste {
         this.posti_disponibili = posti_auto;
         this.nomeAutista = nomeAutista;
         this.ID = ID;
+        this.giorno = giorno;
+        this.mese = mese;
+        this.anno = anno;
     }
 }

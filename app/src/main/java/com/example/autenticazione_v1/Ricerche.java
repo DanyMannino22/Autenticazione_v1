@@ -30,6 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.util.Objects;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link Ricerche#newInstance} factory method to
@@ -57,6 +59,8 @@ public class Ricerche extends Fragment {
     int cont, nRichiesteCompatibili = 0;
     Richieste []r;
     Richieste []valide;
+
+    TextView noResult;
 
     public Ricerche() {
         // Required empty public constructor
@@ -87,14 +91,17 @@ public class Ricerche extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();  //prende il current user
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ricerche, container, false);
-        layout = view.findViewById(R.id.layout_ricerche);
 
+        layout = view.findViewById(R.id.layout_ricerche);
+        noResult = view.findViewById(R.id.nessunRisultato);
 
         Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
         partenza = b.getString("partenza", partenza);
@@ -144,7 +151,7 @@ public class Ricerche extends Fragment {
 
         int j;
         for(j = 0; j < n; j++){         //Aggiungo richieste compatibili ai filtri applicati
-            if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0){
+            if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0 && !user.getUid().equals(tmp[j].getAutista())){
                 nRichiesteCompatibili++;
                 addRichiesta(tmp[j], inflater);
 
@@ -152,15 +159,18 @@ public class Ricerche extends Fragment {
         }
 
         if(nRichiesteCompatibili == 0){     //Se non ci sono richieste compatibili compare un messaggio che avverte utente
-            RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            TextView text = new TextView(this.getContext());
-            text.setLayoutParams(p);
-            text.setHeight(110);
-            text.setTextSize(20);
-            text.setPadding(10, 15,0, 0);
-            text.setText("Nessuna richiesta compatibile trovata");
+            //RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            //TextView text = new TextView(this.getContext());
+            noResult.setLayoutParams(p);
+            noResult.setHeight(110);
+            noResult.setTextSize(20);
+            noResult.setPadding(10, 15,0, 0);
 
-            layout.addView(text);
+
+            noResult.setText("Nessuna richiesta compatibile trovata");
+
+            //layout.addView(noResult);
             return;
         }
 
@@ -182,6 +192,9 @@ public class Ricerche extends Fragment {
         TextView orario = v.findViewById(R.id.orarioRicerca);
         orario.setText("  " + t.getOra_Partenza() + " : " + t.getMinutiPartenza());
 
+        TextView data = v.findViewById(R.id.dataRicerca);
+        data.setText(" " + t.getGiorno() + "/" + t.getMese() + "/" + t.getAnno());
+
         Button b = v.findViewById(R.id.accettaPassaggio);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,8 +203,9 @@ public class Ricerche extends Fragment {
                 int temp = t.getPosti_disponibili();
 
                 mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
-                Toast.makeText(getContext(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
 
+                //mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
+                Toast.makeText(getContext(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
 
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
 

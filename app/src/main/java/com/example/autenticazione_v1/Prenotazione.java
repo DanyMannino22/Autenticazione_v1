@@ -1,5 +1,6 @@
 package com.example.autenticazione_v1;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link Prenotazione#newInstance} factory method to
@@ -34,11 +39,13 @@ import com.google.firebase.database.ValueEventListener;
  */
 public class Prenotazione extends Fragment {
 
-    public String dest, partenza;
-    private TextView destinazione;
+    public String dest, partenza, data;
+    private TextView destinazione, visualizzaData;
     private Spinner spinner, spinnerOre, spinnerMinuti, spinnerPosti;
 
-    Button caricaRichiesta;
+    int gg, mm, aaaa;
+
+    Button caricaRichiesta, selezionaData;
     String nomeCognome;
     FirebaseUser user;
     FirebaseAuth auth;
@@ -115,6 +122,8 @@ public class Prenotazione extends Fragment {
             }
         });
 
+        final Calendar prova = Calendar.getInstance();
+
         destinazione = view.findViewById(R.id.textDestinazione);
         Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
         dest = b.getString("key", dest);
@@ -150,6 +159,48 @@ public class Prenotazione extends Fragment {
         // Apply the adapter to the spinner
         spinnerPosti.setAdapter(adapter3);
 
+        selezionaData = view.findViewById(R.id.selezionaData);
+        visualizzaData = view.findViewById(R.id.visualizzaData);
+
+        // on below line we are adding click listener for our pick date button
+        selezionaData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // on below line we are getting
+                // the instance of our calendar.
+                final Calendar c = Calendar.getInstance();
+
+                // on below line we are getting
+                // our day, month and year.
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+                // on below line we are creating a variable for date picker dialog.
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // on below line we are setting date to our text view.
+                                visualizzaData.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                gg = dayOfMonth;
+                                mm = monthOfYear+1;
+                                aaaa = year;
+
+                                data = gg + "/" + mm + "/" + aaaa;
+                                //Toast.makeText(getContext(), dayOfMonth + "-" + (monthOfYear + 1) + "-" + year, Toast.LENGTH_SHORT).show();
+
+                            }
+                        },
+                        // on below line we are passing year,
+                        // month and day for selected date in our date picker.
+                        year, month, day);
+                // at last we are calling show to
+                // display our date picker dialog.
+                datePickerDialog.show();
+
+            }
+        });
 
 
         annulla = view.findViewById(R.id.annulla);
@@ -176,15 +227,32 @@ public class Prenotazione extends Fragment {
                     return;
                 }
 
-                //Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, "");
+                if(aaaa < prova.get(Calendar.YEAR)){
+                    Toast.makeText(getContext(), "Seleziona una data valida", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(aaaa == prova.get(Calendar.YEAR)){
+                    if(mm < prova.get(Calendar.MONTH)+1) {
+                        Toast.makeText(getContext(), "Seleziona una data valida", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    else if (mm == prova.get(Calendar.MONTH)+1 && gg < prova.get(Calendar.DAY_OF_MONTH)) {
+                        Toast.makeText(getContext(), "Seleziona una data valida", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+
+
+                    //Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, "");
 
                 idReference = mDatabase.child("richieste");
                 String key = idReference.push().getKey(); //This is the value of your key
-                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, key);
+                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, key, gg, mm, aaaa);
                 idReference.child(key).setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getContext(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
 
                         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
 

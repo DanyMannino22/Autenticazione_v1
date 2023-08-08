@@ -1,5 +1,6 @@
 package com.example.autenticazione_v1;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,9 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,9 +37,10 @@ public class FiltroRicerche extends Fragment {
     private String mParam2;
 
     Spinner partenza, oraInizio, oraFine;
-    TextView annulla, destinazione;
+    TextView annulla, destinazione, visualizzaData;
     String dest, inizio, fine, part;
-    Button cerca;
+    Button cerca, selezData;
+    int gg, mm ,aaaa;
     public FiltroRicerche() {
         // Required empty public constructor
     }
@@ -72,6 +77,8 @@ public class FiltroRicerche extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filtro_ricerche, container, false);
+
+        final Calendar prova = Calendar.getInstance();
 
         destinazione = view.findViewById(R.id.filtroDestinazione);
         Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
@@ -114,8 +121,47 @@ public class FiltroRicerche extends Fragment {
             }
         });
 
-        cerca = view.findViewById(R.id.bottoneRicerca);
+        visualizzaData = view.findViewById(R.id.filtroData);
+        selezData = view.findViewById(R.id.selezDataFiltro);
+        selezData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // on below line we are getting
+                // the instance of our calendar.
+                final Calendar c = Calendar.getInstance();
 
+                // on below line we are getting
+                // our day, month and year.
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+                // on below line we are creating a variable for date picker dialog.
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        // on below line we are setting date to our text view.
+                        visualizzaData.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                        gg = dayOfMonth;
+                        mm = monthOfYear+1;
+                        aaaa = year;
+
+                        //Toast.makeText(getContext(), dayOfMonth + "-" + (monthOfYear + 1) + "-" + year, Toast.LENGTH_SHORT).show();
+
+                    }
+                },
+                        // on below line we are passing year,
+                        // month and day for selected date in our date picker.
+                        year, month, day);
+                // at last we are calling show to
+                // display our date picker dialog.
+                datePickerDialog.show();
+
+            }
+        });
+
+        cerca = view.findViewById(R.id.bottoneRicerca);
         cerca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,8 +174,23 @@ public class FiltroRicerche extends Fragment {
                 }
 
                 if(Integer.parseInt(oraInizio.getSelectedItem().toString()) >= Integer.parseInt(oraFine.getSelectedItem().toString())){
-                    Toast.makeText(getActivity(), "Orario fascia non valido", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Orario fascia non valido", Toast.LENGTH_SHORT).show();
                     return;
+                }
+
+                if(aaaa < prova.get(Calendar.YEAR)){
+                    Toast.makeText(getActivity().getApplicationContext(), "Seleziona una data valida", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(aaaa == prova.get(Calendar.YEAR)){
+                    if(mm < prova.get(Calendar.MONTH)+1) {
+                        Toast.makeText(getActivity().getApplicationContext(), "Seleziona una data valida", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    else if (mm == prova.get(Calendar.MONTH)+1 && gg < prova.get(Calendar.DAY_OF_MONTH)) {
+                        Toast.makeText(getActivity().getApplicationContext(), "Seleziona una data valida", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
 
                 inizio = oraInizio.getSelectedItem().toString();

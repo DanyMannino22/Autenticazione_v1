@@ -12,10 +12,23 @@
     tools:context=".Prenotazione">
 
     <TextView
+        android:id="@+id/textView19"
+        android:layout_width="116dp"
+        android:layout_height="48dp"
+        android:layout_row="9"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Data:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/annulla"
         android:layout_width="86dp"
         android:layout_height="48dp"
-        android:layout_row="11"
+        android:layout_row="12"
         android:layout_column="1"
         android:layout_gravity="top"
         android:layout_marginTop="10dp"
@@ -46,14 +59,26 @@
         android:dropDownWidth="match_parent" />
 
     <TextView
-        android:id="@+id/textView14"
+        android:id="@+id/visualizzaData"
         android:layout_width="261dp"
-        android:layout_height="48dp"
-        android:layout_row="9"
+        android:layout_height="40dp"
+        android:layout_row="10"
         android:layout_column="1"
         android:layout_gravity="top"
         android:layout_marginTop="5dp"
         android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/textView23"
+        android:layout_width="261dp"
+        android:layout_height="48dp"
+        android:layout_row="11"
+        android:layout_column="1"
+        android:layout_gravity="top"
+        android:layout_marginTop="5dp"
+        android:gravity="center|left"
         android:text="Posti Disponibili:"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -97,7 +122,7 @@
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="50dp"
-        android:layout_height="70dp"
+        android:layout_height="50dp"
         android:layout_row="0"
         android:layout_column="0"
         android:backgroundTint="#EDEDED"
@@ -144,11 +169,12 @@
 
     <Spinner
         android:id="@+id/spinnerPosti"
-        android:layout_width="164dp"
+        android:layout_width="98dp"
         android:layout_height="wrap_content"
-        android:layout_row="10"
+        android:layout_row="11"
         android:layout_column="1"
-        android:layout_gravity="center|top"
+        android:layout_gravity="center|right"
+        android:layout_marginTop="5dp"
         android:dropDownWidth="match_parent"
         android:minHeight="48dp" />
 
@@ -156,11 +182,21 @@
         android:id="@+id/ConfermaDettagli"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
-        android:layout_row="11"
+        android:layout_row="12"
         android:layout_column="1"
         android:layout_gravity="right"
         android:layout_marginTop="10dp"
         android:text="Conferma"
         android:textSize="15dp" />
+
+    <Button
+        android:id="@+id/selezionaData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="9"
+        android:layout_column="1"
+        android:layout_gravity="center|right"
+        android:layout_marginTop="5dp"
+        android:text="Seleziona Data" />
 
 </GridLayout>

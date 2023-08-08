@@ -204,7 +204,26 @@ public class Ricerche extends Fragment {
 
                 mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
 
-                //mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
+               /* mDatabase.child(t.getID()).child("passeggeri");
+                mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot richieste : snapshot.getChildren()) {
+                            //System.out.println(utenti.getKey());
+                            if(richieste.getValue().equals("")){
+                                System.out.println("Vuoto");
+                            }
+                            //addRichiesta();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            */
+
                 Toast.makeText(getContext(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
 
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();

@@ -1,10 +1,25 @@
 package com.example.autenticazione_v1;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Richieste {
 
-    private String autista, passeggero1, passeggero2, passeggero3, passeggero4, partenza, destinazione, nomeAutista,  ID;
+    private String autista, passeggero, passeggero3, passeggero4, partenza, destinazione, nomeAutista,  ID;
     private int posti_auto, ora_Partenza, minutiPartenza, posti_disponibili;
     private int giorno, mese, anno;
+
+    //private HashMap<String, String> passeggeri;
+
+    Passeggeri p;
+
+    public Passeggeri getP() {
+        return p;
+    }
+
+    public void setP(Passeggeri p) {
+        this.p = p;
+    }
 
     public String getID() {
         return ID;
@@ -62,20 +77,21 @@ public class Richieste {
         this.autista = autista;
     }
 
-    public String getPasseggero1() {
-        return passeggero1;
+    /*public HashMap<String, String> getPasseggeri() {
+        return passeggeri;
     }
 
-    public void setPasseggero1(String passeggero1) {
-        this.passeggero1 = passeggero1;
+
+    public void setPasseggeri(HashMap<String, String> passeggeri) {
+        this.passeggeri = passeggeri;
+    }
+     */
+    public String getPasseggero() {
+        return passeggero;
     }
 
-    public String getPasseggero2() {
-        return passeggero2;
-    }
-
-    public void setPasseggero2(String passeggero2) {
-        this.passeggero2 = passeggero2;
+    public void setPasseggero(String passeggero2) {
+        this.passeggero = passeggero;
     }
 
     public String getPasseggero3() {
@@ -134,9 +150,9 @@ public class Richieste {
         this.minutiPartenza = minutiPartenza;
     }
 
-    public Richieste(String autista, String passeggero1, String passeggero2, String passeggero3, String passeggero4, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_disponibili) {
+    /*public Richieste(String autista, String passeggeri, String passeggero2, String passeggero3, String passeggero4, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_disponibili) {
         this.autista = autista;
-        this.passeggero1 = passeggero1;
+        this.passeggeri = passeggeri;
         this.passeggero2 = passeggero2;
         this.passeggero3 = passeggero3;
         this.passeggero4 = passeggero4;
@@ -147,11 +163,11 @@ public class Richieste {
         this.minutiPartenza = minutiPartenza;
         this.posti_disponibili = posti_auto;
     }
-
+*/
     public Richieste() {
     }
 
-    public Richieste(String autista, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, int posti_disponibili, String nomeAutista, String ID, int giorno, int mese, int anno) {
+    public Richieste(String autista, String partenza, String destinazione, int posti_auto, int ora_Partenza, int minutiPartenza, String nomeAutista, String ID, int giorno, int mese, int anno, Passeggeri p) {
         this.autista = autista;
         this.partenza = partenza;
         this.destinazione = destinazione;
@@ -164,5 +180,6 @@ public class Richieste {
         this.giorno = giorno;
         this.mese = mese;
         this.anno = anno;
+        this.p = p;
     }
 }

@@ -29,8 +29,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -248,7 +250,19 @@ public class Prenotazione extends Fragment {
 
                 idReference = mDatabase.child("richieste");
                 String key = idReference.push().getKey(); //This is the value of your key
-                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, key, gg, mm, aaaa);
+
+                //HashMap<String, String> passeggeri = new HashMap<String, String>();
+                /*for(int i = 0; i < Integer.parseInt(spinnerPosti.getSelectedItem().toString()); i++){
+                    passeggeri.put("passeggero"+(i+1), "");
+                }*/
+
+                ArrayList<String> lista = new ArrayList<String>();
+                for(int i = 0; i < Integer.parseInt(spinnerPosti.getSelectedItem().toString()); i++){
+                    lista.add("");
+                }
+                Passeggeri passeggeri = new Passeggeri(lista);
+
+                Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), nomeCognome, key, gg, mm, aaaa, passeggeri);
                 idReference.child(key).setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

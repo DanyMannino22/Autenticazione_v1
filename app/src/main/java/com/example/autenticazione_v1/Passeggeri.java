@@ -19,4 +19,13 @@ public class Passeggeri {
     public Passeggeri(ArrayList<String> passeggeri) {
         this.passeggeri = passeggeri;
     }
+
+    public void setPasseggero(int i, String nome){
+        passeggeri.set(i, nome);
+        return;
+    }
+
+    public void stampa(){
+            System.out.println(passeggeri.toString());
+    }
 }

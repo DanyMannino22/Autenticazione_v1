@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -203,6 +204,81 @@ public class Ricerche extends Fragment {
                 int temp = t.getPosti_disponibili();
 
                 mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
+
+                ArrayList<String> nuovo = t.getP().getPasseggeri();
+                for(int i = 0; i < nuovo.size(); i++){
+                    if(nuovo.get(i).equals("")){
+                        nuovo.set(i, user.getUid());
+                        break;
+                    }
+                }
+
+                Passeggeri p = new Passeggeri();
+                p.setPasseggeri(nuovo);
+                mDatabase.child(t.getID()).child("p").setValue(p);
+                //mDatabase.child(t.getID()).child("p").child("passeggeri")
+            /*
+                mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Passeggeri updated = new Passeggeri();
+                        for (DataSnapshot tmp : snapshot.getChildren()) {
+                            Richieste temp = tmp.getValue(Richieste.class);
+
+                            if (temp.getID().equals(t.getID())) {
+                                System.out.println("TRUE");
+                                int dim = temp.getP().getPasseggeri().size();
+                                ArrayList<String> nuovo = temp.getP().getPasseggeri();
+                                for (int k = 0; k < dim; k++) {
+
+                                    //System.out.println("BREAK");
+
+                                    //   if (temp.getP().getPasseggeri().get(i).equals("")) {
+                                    //      System.out.println("Ciaoooo");
+                                    //     temp.getP().setPasseggero(i, user.getUid());
+                                    //    System.out.println(temp.getP().getPasseggeri());
+                                    //   return;
+                                    //}
+
+
+                                    if (nuovo.get(k).equals("")) {
+                                        nuovo.set(k, user.getUid());
+                                      //  System.out.println("Inserisco");
+                                        break;
+                                    }
+                                }
+                                updated.setPasseggeri(nuovo);
+                                //System.out.println(updated);
+                                temp.setP(updated);
+                                DatabaseReference prova = FirebaseDatabase.getInstance().getReference().child("richieste");
+                                prova.child(t.getID()).child("p").child("passeggeri").setValue(nuovo);
+                                return;
+                            }
+                        }
+
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+              */
+                /*mDatabase.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot passegg  : snapshot.getChildren()){
+                            System.out.println(passegg.child("p").child("passeggeri").child("0").getValue());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+                 */
 
                /* mDatabase.child(t.getID()).child("passeggeri");
                 mDatabase.addValueEventListener(new ValueEventListener() {

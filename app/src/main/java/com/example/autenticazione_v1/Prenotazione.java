@@ -244,12 +244,27 @@ public class Prenotazione extends Fragment {
                     }
                 }
 
-
-
-                    //Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, "");
+                //Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, "");
 
                 idReference = mDatabase.child("richieste");
                 String key = idReference.push().getKey(); //This is the value of your key
+
+
+                //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                DatabaseReference notifiche = FirebaseDatabase.getInstance().getReference();        //CREO LA NOTIFICA
+                DatabaseReference inserisciNotifica = notifiche.child("notifiche");
+                String chiave = inserisciNotifica.push().getKey();
+
+                ArrayList<String> destinatari = new ArrayList<String>();
+                for(int i = 0; i < Integer.parseInt(spinnerPosti.getSelectedItem().toString()); i++){
+                    destinatari.add("");
+                }
+
+                Notifiche n = new Notifiche("inserimento", user.getUid(), destinatari, key, chiave);       //Uso la chiave della richiesta in modo da poter aggiungere o eliminare destinatari di eventuuali cancellazioni o cambiamenti della richiesta
+                inserisciNotifica.child(chiave).setValue(n);
+
+                //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
                 //HashMap<String, String> passeggeri = new HashMap<String, String>();
                 /*for(int i = 0; i < Integer.parseInt(spinnerPosti.getSelectedItem().toString()); i++){

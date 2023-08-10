@@ -56,11 +56,11 @@ public class Ricerche extends Fragment {
     Utente u;
 
     String destinazione, partenza, oraInizio, oraFine;
+    ArrayList<String> dest;
     LinearLayout layout;
     int cont, nRichiesteCompatibili = 0;
     Richieste []r;
-    Richieste []valide;
-
+    Notifiche []n;
     TextView noResult;
 
     public Ricerche() {
@@ -160,6 +160,7 @@ public class Ricerche extends Fragment {
 
             }
              */
+
             if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0 && !user.getUid().equals(tmp[j].getAutista())) {
                 //int dim = tmp[j].getP().getPasseggeri().isEmpty();
                 //System.out.println(dim);
@@ -173,7 +174,6 @@ public class Ricerche extends Fragment {
                 for (int i = 0; i < tmp[j].getP().getPasseggeri().size(); i++) {            //verifico se già prenotato per quella richista
                     if (tmp[j].getP().getPasseggeri().get(i).equals(user.getUid())) {
                         prenotato = true;
-                        System.out.println("Prenotato");
                         break;
                     }
                 }
@@ -232,6 +232,7 @@ public class Ricerche extends Fragment {
 
                 mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);
 
+
                 ArrayList<String> nuovo = t.getP().getPasseggeri();
                 for(int i = 0; i < nuovo.size(); i++){
                     if(nuovo.get(i).equals("")){
@@ -243,6 +244,87 @@ public class Ricerche extends Fragment {
                 Passeggeri p = new Passeggeri();
                 p.setPasseggeri(nuovo);
                 mDatabase.child(t.getID()).child("p").setValue(p);
+
+                //System.out.println(t.getID());
+                String id_richiesta = t.getID();
+                //System.out.println(id_richiesta);
+
+                DatabaseReference notifica = FirebaseDatabase.getInstance().getReference().child("notifiche");
+                notifica.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int cont_n = (int) snapshot.getChildrenCount();
+                        n = new Notifiche[cont_n];
+                        int i = 0;
+                        for(DataSnapshot notifiche : snapshot.getChildren()){
+                            n[i] = notifiche.getValue(Notifiche.class);
+                            i++;
+                            System.out.println("Ciaoo");
+                        }
+
+                        aggiornaDestinatari(n, cont_n, t.getID());
+                        notifica.removeEventListener(this);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+
+                });
+
+
+
+
+
+
+                /*notifica.addValueEventListener(new ValueEventListener() {
+
+                    //ArrayList<String> dest;
+                   // String id_notifica;
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {              //aggiungo utente nella lista interessati in caso di cancellazione da parte dell'autista
+                        for(DataSnapshot notifiche : snapshot.getChildren()){
+                            Notifiche n = notifiche.getValue(Notifiche.class);
+                            //System.out.println(n.getIDRichiestaRiferimento());
+
+                            if(n.getIDRichiestaRiferimento().equals(id_richiesta)){
+                                id_notifica = notifiche.getKey();
+                                dest = n.getDestinatari();
+                                System.out.println(id_notifica);
+                                System.out.println(dest.size());
+
+                                for(int k = 0; k < dest.size(); k++) {
+                                    if (dest.get(k).equals("")) {
+                                        dest.set(k, user.getUid());
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                        DatabaseReference modificaRichiesta = FirebaseDatabase.getInstance().getReference().child("notifiche").child(id_notifica).child("destinatari");
+                        modificaRichiesta.setValue(dest);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                 */
+
+                /*for(int k = 0; k < dest.size(); k++){
+                    if(dest.get(k).equals("")){
+                        dest.set(k, user.getUid());
+                        break;
+                    }
+                }
+
+                 */
+
+//                notifica.child(id_notifica).child("destinatari").setValue(dest);
+
+
                 //mDatabase.child(t.getID()).child("p").child("passeggeri")
             /*
                 mDatabase.addValueEventListener(new ValueEventListener() {
@@ -371,6 +453,28 @@ public class Ricerche extends Fragment {
 
         v.findViewById(R.id.textView17);
         layout.addView(v);
+    }
+
+    public void aggiornaDestinatari(Notifiche []n, int dim, String id_richiesta){
+        String id_notifica = "";
+        ArrayList<String> dest = new ArrayList<>();
+
+        for(int c = 0; c <dim; c++){
+            if(n[c].getIDRichiestaRiferimento().equals(id_richiesta)){
+                dest = n[c].getDestinatari();
+                id_notifica = n[c].getId();
+                break;
+            }
+        }
+
+        for(int i = 0; i < dest.size(); i++){
+            if (dest.get(i).equals("")) {
+                dest.set(i, user.getUid());
+                break;
+            }
+        }
+        DatabaseReference aggiornaNotifica = FirebaseDatabase.getInstance().getReference().child("notifiche").child(id_notifica).child("destinatari");
+        aggiornaNotifica.setValue(dest);
     }
 
 }

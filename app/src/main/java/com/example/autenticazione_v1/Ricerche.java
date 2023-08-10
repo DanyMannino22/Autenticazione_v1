@@ -152,10 +152,37 @@ public class Ricerche extends Fragment {
 
         int j;
         for(j = 0; j < n; j++){         //Aggiungo richieste compatibili ai filtri applicati
+            boolean prenotato = false;
+            /*
             if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0 && !user.getUid().equals(tmp[j].getAutista())){
                 nRichiesteCompatibili++;
                 addRichiesta(tmp[j], inflater);
 
+            }
+             */
+            if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0 && !user.getUid().equals(tmp[j].getAutista())) {
+                //int dim = tmp[j].getP().getPasseggeri().isEmpty();
+                //System.out.println(dim);
+                /*for (int i = 0; i < tmp[j].getP().getPasseggeri().size(); i++) {
+                    if (tmp[j].getP().getPasseggeri().get(i).equals(user.getUid())) {
+                        prenotato = true;
+                    }
+                }*/
+                //if(prenotato == false){
+
+                for (int i = 0; i < tmp[j].getP().getPasseggeri().size(); i++) {            //verifico se già prenotato per quella richista
+                    if (tmp[j].getP().getPasseggeri().get(i).equals(user.getUid())) {
+                        prenotato = true;
+                        System.out.println("Prenotato");
+                        break;
+                    }
+                }
+
+                if(prenotato == false) {            //se non risulta prenotato, la mostro all'utente, altrimenti la scarto
+                    nRichiesteCompatibili++;
+                    addRichiesta(tmp[j], inflater);
+                }
+                //}
             }
         }
 

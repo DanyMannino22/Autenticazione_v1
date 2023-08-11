@@ -454,8 +454,6 @@ public class Ricerche extends Fragment {
                 });*/
             }
         });
-
-        v.findViewById(R.id.textView17);
         layout.addView(v);
     }
 

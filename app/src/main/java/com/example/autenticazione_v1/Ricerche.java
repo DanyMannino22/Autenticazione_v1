@@ -246,7 +246,6 @@ public class Ricerche extends Fragment {
                 mDatabase.child(t.getID()).child("p").setValue(p);
 
                 //System.out.println(t.getID());
-                String id_richiesta = t.getID();
                 //System.out.println(id_richiesta);
 
                 DatabaseReference notifica = FirebaseDatabase.getInstance().getReference().child("notifiche");
@@ -273,9 +272,14 @@ public class Ricerche extends Fragment {
                 });
 
 
+                DatabaseReference inserisciNotifica = notifica;
+                String chiave = inserisciNotifica.push().getKey();
 
+                ArrayList<String>accetta = new ArrayList<>();
+                accetta.add(t.getAutista());
 
-
+                Notifiche accettazione = new Notifiche("Accetta_passaggio", user.getUid(), accetta, t.getID(), chiave);
+                inserisciNotifica.child(chiave).setValue(accettazione);
 
                 /*notifica.addValueEventListener(new ValueEventListener() {
 

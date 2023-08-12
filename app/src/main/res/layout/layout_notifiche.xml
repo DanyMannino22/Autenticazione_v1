@@ -6,13 +6,18 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         app:cardBackgroundColor="#00FFFFFF">
 
         <TextView
             android:id="@+id/testo"
-            android:layout_width="237dp"
-            android:layout_height="107dp" />
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="Prova"
+            android:textSize="20sp" />
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

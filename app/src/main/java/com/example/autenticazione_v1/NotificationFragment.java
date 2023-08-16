@@ -47,6 +47,7 @@ public class NotificationFragment extends Fragment {
     TextView noNotification;
     LinearLayout layout;
     Richieste []r;
+    String nome_passeggero;
 
 
     public NotificationFragment() {
@@ -120,29 +121,13 @@ public class NotificationFragment extends Fragment {
     public void onItemObtained(Notifiche []tmp, int n, LayoutInflater inflater){
 
         int j;
-        for(j = 0; j < n; j++){         //Aggiungo richieste compatibili ai filtri applicati
-            if(tmp[j].getAutore().equals(user.getUid())) {   //Se utente è autore della notifica, faccio comparire l'avviso
-                nNotifiche++;
+        for(j = 0; j < n; j++){         //Aggiungo notifiche generate dall'utente
+            //if(tmp[j].getAutore().equals(user.getUid())) {   //Se utente è autore della notifica, faccio comparire l'avviso
+                //nNotifiche++;
                 filtraNotifica(tmp[j], inflater);
-            }
+            //}
         }
 
-
-        if(nNotifiche == 0){     //Se non ci sono richieste compatibili compare un messaggio che avverte utente
-            //RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            //TextView text = new TextView(this.getContext());
-            noNotification.setLayoutParams(p);
-            noNotification.setHeight(110);
-            noNotification.setTextSize(20);
-            noNotification.setPadding(10, 15,0, 0);
-
-
-            noNotification.setText("Nessuna notifica trovata");
-
-            //layout.addView(noResult);
-            return;
-        }
     }
 
     public void filtraNotifica(Notifiche t, LayoutInflater inflater){
@@ -173,31 +158,93 @@ public class NotificationFragment extends Fragment {
 
             }
         });
-
-
-
-
     }
 
     void addNotifica(Notifiche t, LayoutInflater inflater, Richieste []r, int dim){
         View v = inflater.inflate(R.layout.layout_notifiche, null);
         int index = 0;
+        TextView testo = v.findViewById(R.id.testo);
         for(int i = 0; i < dim; i++){
                 System.out.println("Ciaoo");
-                if(t.getTipoNotifica().equals("inserimento") && t.getIDRichiestaRiferimento().equals(r[i].getID())) {
+                if(t.getTipoNotifica().equals("inserimento") && t.getIDRichiestaRiferimento().equals(r[i].getID()) && t.getAutore().equals(user.getUid())) {
                     index = i;
+                    //TextView testo = v.findViewById(R.id.testo);
+                    testo.setText("Hai messo a disposizione l'auto per " + r[index].getPosti_auto() + " passeggeri giorno " + r[index].getGiorno() + "/" + r[index].getMese() + "/" + r[index].getAnno() +
+                            " alle ore " + r[index].getOra_Partenza() + ":" + r[index].getMinutiPartenza() + " per la tratta " + r[index].getPartenza() + "-" + r[index].getDestinazione());
+                    nNotifiche++;
+                    System.out.println("sono qui inserimento");
+                    layout.addView(v);
                     break;
                 }
+                else if(t.getTipoNotifica().equals("Accetta_passaggio") && t.getIDRichiestaRiferimento().equals(r[i].getID()) && t.getAutore().equals(user.getUid())){
+                    index = i;
+                    //TextView testo = v.findViewById(R.id.testo);
+                    testo.setText("Hai accettato un passaggio da " + r[index].getNomeAutista() + " giorno " + r[index].getGiorno() + "/" + r[index].getMese() + "/" + r[index].getAnno() +
+                            " alle ore " + r[index].getOra_Partenza() + ":" + r[index].getMinutiPartenza() + " per la tratta " + r[index].getPartenza() + "-" + r[index].getDestinazione());
+                    nNotifiche++;
+                    System.out.println("sono qui accetta orig");
+                    layout.addView(v);
+                    break;
+                    //TextView testo = v.findViewById(R.id.testo);
+                    //testo.setText("Accettazione");
+                }
+                else if(t.getTipoNotifica().equals("Accetta_passaggio") && t.getIDRichiestaRiferimento().equals(r[i].getID())){
+                    if(t.getDestinatari().get(0).equals(user.getUid())){
+
+                        DatabaseReference utenti = FirebaseDatabase.getInstance().getReference().child("users");
+                        utenti.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot users : snapshot.getChildren()){
+                                    if(users.getKey().equals(t.getAutore())){
+                                        String nome = users.getValue(Utente.class).getNome() + " " + users.getValue(Utente.class).getCognome();
+                                        testo.append(nome);
+                                        return;
+                                    }
+                                }
+
+                                utenti.removeEventListener(this);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                        testo.setText("È stato accettato il passaggio da te offerto per giorno " + r[i].getGiorno() + "/" + r[i].getMese() + "/" + r[i].getAnno() +
+                                " alle ore " + r[i].getOra_Partenza() + ":" + r[i].getMinutiPartenza() + " per la tratta " + r[i].getPartenza() + "-" + r[i].getDestinazione() + " da parte dell'utente ");
+
+                        nNotifiche++;
+                        System.out.println("sono qui accetta dest");
+                        layout.addView(v);
+                        break;
+                    }
+
+                }
                 else{
-                    TextView testo = v.findViewById(R.id.testo);
-                    testo.setText("Accettazione");
+                    continue;
                 }
             }
+        if(nNotifiche == 0){     //Se non ci sono notifiche compare un messaggio che avverte utente
+            System.out.println("DADAFWAFAFAWF");
+            //RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            //TextView text = new TextView(this.getContext());
+            noNotification.setLayoutParams(p);
+            noNotification.setHeight(110);
+            noNotification.setTextSize(20);
+            noNotification.setPadding(10, 15,0, 0);
 
-        TextView testo = v.findViewById(R.id.testo);
-        testo.setText("Hai messo a disposizione l'auto per " + r[index].getPosti_auto() + " passeggeri giorno " + r[index].getGiorno() + "/" + r[index].getMese() + "/" + r[index].getAnno() +
-                " alle ore " + r[index].getOra_Partenza() + ":" + r[index].getMinutiPartenza() + " per la tratta " + r[index].getPartenza() + "-" + r[index].getDestinazione());
 
-        layout.addView(v);
+            noNotification.setText("Nessuna notifica trovata");
+
+            //layout.addView(noResult);
+        }
+        System.out.println(nNotifiche);
+    }
+
+    public void setValore(String valore){
+        this.nome_passeggero = valore;
     }
 }

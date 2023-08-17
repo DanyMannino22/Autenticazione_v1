@@ -154,6 +154,7 @@ public class SettingsFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 

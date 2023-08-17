@@ -43,11 +43,12 @@ public class NotificationFragment extends Fragment {
     FirebaseUser user;
     FirebaseAuth auth;
     Notifiche []n;
-    int nNotifiche = 0;
+    int nNotifiche = 0, cont = 0, totale = 0;
     TextView noNotification;
     LinearLayout layout;
     Richieste []r;
     String nome_passeggero;
+    Button cancellaPrenotazione;
 
 
     public NotificationFragment() {
@@ -92,7 +93,6 @@ public class NotificationFragment extends Fragment {
         noNotification = view.findViewById(R.id.nessunaNotifica);
         layout = view.findViewById(R.id.layoutNotifiche);
 
-
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("notifiche");
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -106,34 +106,28 @@ public class NotificationFragment extends Fragment {
                     i++;
                     //addRichiesta();
                 }
-
                 NotificationFragment.this.onItemObtained(n, cont, inflater);
+                mDatabase.removeEventListener(this);
             }
-
             public void onCancelled(@NonNull DatabaseError error) {
                 System.out.println("FAIL DATABASE");
             }
         });
-
         return view;
     }
 
     public void onItemObtained(Notifiche []tmp, int n, LayoutInflater inflater){
-
         int j;
         for(j = 0; j < n; j++){         //Aggiungo notifiche generate dall'utente
             //if(tmp[j].getAutore().equals(user.getUid())) {   //Se utente è autore della notifica, faccio comparire l'avviso
                 //nNotifiche++;
-                filtraNotifica(tmp[j], inflater);
+            filtraNotifica(tmp[j], inflater);
             //}
         }
-
     }
 
     public void filtraNotifica(Notifiche t, LayoutInflater inflater){
-
         DatabaseReference richieste = FirebaseDatabase.getInstance().getReference().child("richieste");
-
         richieste.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -152,10 +146,8 @@ public class NotificationFragment extends Fragment {
                 addNotifica(t,inflater, r, i);
                 richieste.removeEventListener(this);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
@@ -163,34 +155,27 @@ public class NotificationFragment extends Fragment {
     void addNotifica(Notifiche t, LayoutInflater inflater, Richieste []r, int dim){
         View v = inflater.inflate(R.layout.layout_notifiche, null);
         int index = 0;
+
         TextView testo = v.findViewById(R.id.testo);
         for(int i = 0; i < dim; i++){
-                System.out.println("Ciaoo");
                 if(t.getTipoNotifica().equals("inserimento") && t.getIDRichiestaRiferimento().equals(r[i].getID()) && t.getAutore().equals(user.getUid())) {
                     index = i;
-                    //TextView testo = v.findViewById(R.id.testo);
                     testo.setText("Hai messo a disposizione l'auto per " + r[index].getPosti_auto() + " passeggeri giorno " + r[index].getGiorno() + "/" + r[index].getMese() + "/" + r[index].getAnno() +
                             " alle ore " + r[index].getOra_Partenza() + ":" + r[index].getMinutiPartenza() + " per la tratta " + r[index].getPartenza() + "-" + r[index].getDestinazione());
                     nNotifiche++;
-                    System.out.println("sono qui inserimento");
                     layout.addView(v);
                     break;
                 }
                 else if(t.getTipoNotifica().equals("Accetta_passaggio") && t.getIDRichiestaRiferimento().equals(r[i].getID()) && t.getAutore().equals(user.getUid())){
                     index = i;
-                    //TextView testo = v.findViewById(R.id.testo);
                     testo.setText("Hai accettato un passaggio da " + r[index].getNomeAutista() + " giorno " + r[index].getGiorno() + "/" + r[index].getMese() + "/" + r[index].getAnno() +
                             " alle ore " + r[index].getOra_Partenza() + ":" + r[index].getMinutiPartenza() + " per la tratta " + r[index].getPartenza() + "-" + r[index].getDestinazione());
                     nNotifiche++;
-                    System.out.println("sono qui accetta orig");
                     layout.addView(v);
                     break;
-                    //TextView testo = v.findViewById(R.id.testo);
-                    //testo.setText("Accettazione");
                 }
                 else if(t.getTipoNotifica().equals("Accetta_passaggio") && t.getIDRichiestaRiferimento().equals(r[i].getID())){
                     if(t.getDestinatari().get(0).equals(user.getUid())){
-
                         DatabaseReference utenti = FirebaseDatabase.getInstance().getReference().child("users");
                         utenti.addValueEventListener(new ValueEventListener() {
                             @Override
@@ -202,31 +187,71 @@ public class NotificationFragment extends Fragment {
                                         return;
                                     }
                                 }
-
                                 utenti.removeEventListener(this);
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-
                             }
                         });
-
                         testo.setText("È stato accettato il passaggio da te offerto per giorno " + r[i].getGiorno() + "/" + r[i].getMese() + "/" + r[i].getAnno() +
                                 " alle ore " + r[i].getOra_Partenza() + ":" + r[i].getMinutiPartenza() + " per la tratta " + r[i].getPartenza() + "-" + r[i].getDestinazione() + " da parte dell'utente ");
-
                         nNotifiche++;
-                        System.out.println("sono qui accetta dest");
                         layout.addView(v);
                         break;
                     }
-
+                }
+                else if(t.getTipoNotifica().equals("cancellazione") && t.getDestinatari().get(0).equals(user.getUid())){
+                    System.out.println(t.getDestinatari().get(0) + "cancellazione");
+                    testo.setText("Il passaggio che avevi accettato da " + r[i].getNomeAutista() + " per  giorno " + r[i].getGiorno() + "/" + r[i].getMese() + "/" + r[i].getAnno() +
+                            " alle ore " + r[i].getOra_Partenza() + ":" + r[i].getMinutiPartenza() + " per la tratta " + r[i].getPartenza() + "-" + r[i].getDestinazione() + " è stato cancellato");
+                    nNotifiche++;
+                    layout.addView(v);
+                    break;
                 }
                 else{
                     continue;
                 }
             }
-        if(nNotifiche == 0){     //Se non ci sono notifiche compare un messaggio che avverte utente
+
+        cancellaPrenotazione = v.findViewById(R.id.cancellaPrenotazione);
+        if(t.getTipoNotifica().equals("inserimento") || t.getTipoNotifica().equals("Accetta_passaggio") && t.getAutore().equals(user.getUid())){
+            cancellaPrenotazione.setVisibility(View.VISIBLE);
+        }
+        cancellaPrenotazione.setOnClickListener(new View.OnClickListener() {
+            DatabaseReference notifiche = FirebaseDatabase.getInstance().getReference().child("notifiche");
+            DatabaseReference richieste = FirebaseDatabase.getInstance().getReference().child("richieste");
+            @Override
+            public void onClick(View view) {
+                if(t.getTipoNotifica().equals("inserimento")){
+                    System.out.println("Inserimento");
+
+                    ArrayList<String> destinatari = t.getDestinatari();
+                    for(int i = 0; i < destinatari.size(); i++){
+                        if(destinatari.get(i).equals("")){
+                            break;
+                        }
+                        else {
+                            String chiave = notifiche.push().getKey();
+                            ArrayList<String> dest = new ArrayList<>();
+                            dest.add(destinatari.get(i));
+                            Notifiche n = new Notifiche("cancellazione", user.getUid(), dest, t.getIDRichiestaRiferimento(), chiave);       //Uso la chiave della richiesta in modo da poter aggiungere o eliminare destinatari di eventuuali cancellazioni o cambiamenti della richiesta
+                            notifiche.child(chiave).setValue(n);
+                        }
+                    }
+
+                    notifiche.child(t.getId()).removeValue();
+                    richieste.child(t.getIDRichiestaRiferimento()).removeValue();
+
+                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                    transaction.replace(R.id.frame_layout, new NotificationFragment());
+                    transaction.commit();
+                }
+                else
+                    System.out.println("Richiesta = " + t.getId());
+            }
+        });
+
+        /*if(nNotifiche == 0) {     //Se non ci sono notifiche compare un messaggio che avverte utente
             System.out.println("DADAFWAFAFAWF");
             //RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -235,16 +260,9 @@ public class NotificationFragment extends Fragment {
             noNotification.setHeight(110);
             noNotification.setTextSize(20);
             noNotification.setPadding(10, 15,0, 0);
-
-
             noNotification.setText("Nessuna notifica trovata");
+        }*/
 
-            //layout.addView(noResult);
-        }
         System.out.println(nNotifiche);
-    }
-
-    public void setValore(String valore){
-        this.nome_passeggero = valore;
     }
 }

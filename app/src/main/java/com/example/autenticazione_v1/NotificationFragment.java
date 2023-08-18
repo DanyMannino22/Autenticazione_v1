@@ -94,17 +94,15 @@ public class NotificationFragment extends Fragment {
         layout = view.findViewById(R.id.layoutNotifiche);
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("notifiche");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.addValueEventListener(new ValueEventListener() {              //estraggo tutte le notifiche presenti sul database
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int cont = (int) snapshot.getChildrenCount();
                 n = new Notifiche[cont];
                 int i = 0;
-                for (DataSnapshot notifiche : snapshot.getChildren()) {
-                    //System.out.println(utenti.getKey());
+                for (DataSnapshot notifiche : snapshot.getChildren()) {         //le conservo in un arrray e invoco la funzione per filtrarle e mostrarle all'utente
                     n[i] = notifiche.getValue(Notifiche.class);
                     i++;
-                    //addRichiesta();
                 }
                 NotificationFragment.this.onItemObtained(n, cont, inflater);
                 mDatabase.removeEventListener(this);
@@ -118,17 +116,14 @@ public class NotificationFragment extends Fragment {
 
     public void onItemObtained(Notifiche []tmp, int n, LayoutInflater inflater){
         int j;
-        for(j = 0; j < n; j++){         //Aggiungo notifiche generate dall'utente
-            //if(tmp[j].getAutore().equals(user.getUid())) {   //Se utente è autore della notifica, faccio comparire l'avviso
-                //nNotifiche++;
-            filtraNotifica(tmp[j], inflater);
-            //}
+        for(j = 0; j < n; j++){
+            filtraNotifica(tmp[j], inflater);           //invoco la funzione che filtrra notifiche
         }
     }
 
     public void filtraNotifica(Notifiche t, LayoutInflater inflater){
-        DatabaseReference richieste = FirebaseDatabase.getInstance().getReference().child("richieste");
-        richieste.addValueEventListener(new ValueEventListener() {
+        DatabaseReference richieste = FirebaseDatabase.getInstance().getReference().child("richieste");         //ricavo le richieste per aggiornare i dati
+        richieste.addValueEventListener(new ValueEventListener() {                                                       //e passo l'array alla funzione di inserimento
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int n_richieste = (int)snapshot.getChildrenCount();
@@ -156,7 +151,10 @@ public class NotificationFragment extends Fragment {
         View v = inflater.inflate(R.layout.layout_notifiche, null);
         int index = 0;
 
-        TextView testo = v.findViewById(R.id.testo);
+        TextView testo = v.findViewById(R.id.testo);           //casella di testo dove verranno scritti i dettagli della notifica
+
+        //Ogni notifica viene filtrata e, se rigurda l'utente loggato, viene mostrata a schermo, altrimenti viene scartata
+
         for(int i = 0; i < dim; i++){
                 if(t.getTipoNotifica().equals("inserimento") && t.getIDRichiestaRiferimento().equals(r[i].getID()) && t.getAutore().equals(user.getUid())) {
                     index = i;
@@ -200,10 +198,37 @@ public class NotificationFragment extends Fragment {
                         break;
                     }
                 }
-                else if(t.getTipoNotifica().equals("cancellazione") && t.getDestinatari().get(0).equals(user.getUid())){
+                else if(t.getTipoNotifica().equals("cancellazione") && t.getDestinatari().get(0).equals(user.getUid())){        //CORREGGERE
                     System.out.println(t.getDestinatari().get(0) + "cancellazione");
-                    testo.setText("Il passaggio che avevi accettato da " + r[i].getNomeAutista() + " per  giorno " + r[i].getGiorno() + "/" + r[i].getMese() + "/" + r[i].getAnno() +
-                            " alle ore " + r[i].getOra_Partenza() + ":" + r[i].getMinutiPartenza() + " per la tratta " + r[i].getPartenza() + "-" + r[i].getDestinazione() + " è stato cancellato");
+                    index = i;
+                    testo.setText("Il passaggio che avevi accettato da " + t.getR().getNomeAutista() + " per  giorno " + t.getR().getGiorno() + "/" + t.getR().getMese() + "/" +t.getR().getAnno() +
+                            " alle ore " + t.getR().getOra_Partenza() + ":" + t.getR().getMinutiPartenza() + " per la tratta " + t.getR().getPartenza() + "-" + t.getR().getDestinazione() + " è stato cancellato");
+                    nNotifiche++;
+                    layout.addView(v);
+                    break;
+                }
+                else if(t.getTipoNotifica().equals("cancellazione_passaggio") && t.getDestinatari().get(0).equals(user.getUid())){        //CORREGGERE
+                    index = i;
+                    DatabaseReference utenti = FirebaseDatabase.getInstance().getReference().child("users");
+                    utenti.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot users : snapshot.getChildren()){
+                                if(users.getKey().equals(t.getAutore())){
+                                    String nome = users.getValue(Utente.class).getNome() + " " + users.getValue(Utente.class).getCognome();
+                                    testo.append(nome);
+                                    return;
+                                }
+                            }
+                            utenti.removeEventListener(this);
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+
+                    testo.setText("Il passaggio accettato per  giorno " + t.getR().getGiorno() + "/" + t.getR().getMese() + "/" +t.getR().getAnno() +
+                            " alle ore " + t.getR().getOra_Partenza() + ":" + t.getR().getMinutiPartenza() + " per la tratta " + t.getR().getPartenza() + "-" + t.getR().getDestinazione() + " è stato rifiutato da ");
                     nNotifiche++;
                     layout.addView(v);
                     break;
@@ -222,11 +247,11 @@ public class NotificationFragment extends Fragment {
             DatabaseReference richieste = FirebaseDatabase.getInstance().getReference().child("richieste");
             @Override
             public void onClick(View view) {
-                if(t.getTipoNotifica().equals("inserimento")){
+                if(t.getTipoNotifica().equals("inserimento")){          //setto azioni da effettuare se la notifica è di inserimento generata dal current user
                     System.out.println("Inserimento");
-
+                    Richieste tmp = new Richieste();
                     ArrayList<String> destinatari = t.getDestinatari();
-                    for(int i = 0; i < destinatari.size(); i++){
+                    for(int i = 0; i < destinatari.size(); i++){          //ad ogni utente che aveva accettato il mio passaggio invio la notifica che quest'ultimo è stato cancellato
                         if(destinatari.get(i).equals("")){
                             break;
                         }
@@ -234,20 +259,74 @@ public class NotificationFragment extends Fragment {
                             String chiave = notifiche.push().getKey();
                             ArrayList<String> dest = new ArrayList<>();
                             dest.add(destinatari.get(i));
-                            Notifiche n = new Notifiche("cancellazione", user.getUid(), dest, t.getIDRichiestaRiferimento(), chiave);       //Uso la chiave della richiesta in modo da poter aggiungere o eliminare destinatari di eventuuali cancellazioni o cambiamenti della richiesta
-                            notifiche.child(chiave).setValue(n);
+                            for(int j = 0; j < r.length; j++){
+                                if(r[j].getID().equals(t.getIDRichiestaRiferimento())){
+                                    tmp = r[j];
+                                    break;
+                                }
+                            }
+                            Notifiche n = new Notifiche("cancellazione", user.getUid(), dest, t.getIDRichiestaRiferimento(), chiave, tmp);       //Creo una notifica utile ad avvertire coloro che avevano accettato
+                            notifiche.child(chiave).setValue(n);                                                                                           //il passaggio che quest'ultimo è stato cancellato
                         }
                     }
 
                     notifiche.child(t.getId()).removeValue();
-                    richieste.child(t.getIDRichiestaRiferimento()).removeValue();
+                    richieste.child(t.getIDRichiestaRiferimento()).removeValue();       //rimuovo la richiesta cosi che non sia piu visibile ad altri utenti
 
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     transaction.replace(R.id.frame_layout, new NotificationFragment());
                     transaction.commit();
                 }
-                else
+
+                else if(t.getTipoNotifica().equals("Accetta_passaggio")){
+
                     System.out.println("Richiesta = " + t.getId());
+                    Richieste tmp = new Richieste();
+                    int numero_attuale;
+                    for(int j = 0; j < r.length; j++){
+                        if(r[j].getID().equals(t.getIDRichiestaRiferimento())){
+                            tmp = r[j];
+                            break;
+                        }
+                    }
+
+                    numero_attuale = tmp.getPosti_disponibili();                        //incremento il numero di posti disponibili dopo la mia cancellazione
+                    richieste.child(t.getIDRichiestaRiferimento()).child("posti_disponibili").setValue(numero_attuale+1);
+
+                    ArrayList<String> array_aggiornato = new ArrayList<>();
+                    array_aggiornato = tmp.getP().getPasseggeri();
+
+                    for(int k =0; k < array_aggiornato.size(); k++){            //aggiorno l'array dei passeggeri
+                        if(array_aggiornato.get(k).equals(user.getUid())){
+                            array_aggiornato.set(k, "");
+                            break;
+                        }
+                    }
+                    richieste.child(t.getIDRichiestaRiferimento()).child("p").child("passeggeri").setValue(array_aggiornato);
+
+                    ArrayList<String> array_notifiche = new ArrayList<>();
+                    array_notifiche = t.getDestinatari();
+
+                    for(int k =0; k < array_notifiche.size(); k++){            //aggiorno l'array dei passeggeri
+                        if(array_notifiche.get(k).equals(user.getUid())){
+                            array_notifiche.set(k, "");
+                            break;
+                        }
+                    }
+                    notifiche.child(t.getId()).child("destinatari").setValue(array_notifiche); //CORREGGERE
+
+
+                    String chiave = notifiche.push().getKey();
+                    ArrayList<String> dest = new ArrayList<>();
+                    dest.add(t.getDestinatari().get(0));
+                    Notifiche n = new Notifiche("cancellazione_passaggio", user.getUid(), dest, t.getIDRichiestaRiferimento(), chiave, tmp);       //Creo una notifica utile ad avvertire coloro che avevano accettato
+                    notifiche.child(chiave).setValue(n);
+                    notifiche.child(t.getId()).removeValue();
+
+                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                    transaction.replace(R.id.frame_layout, new NotificationFragment());
+                    transaction.commit();
+                }
             }
         });
 

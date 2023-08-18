@@ -117,11 +117,11 @@ public class NotificationFragment extends Fragment {
     public void onItemObtained(Notifiche []tmp, int n, LayoutInflater inflater){
         int j;
         for(j = 0; j < n; j++){
-            filtraNotifica(tmp[j], inflater);           //invoco la funzione che filtrra notifiche
+            filtraNotifica(tmp[j], inflater, tmp);           //invoco la funzione che filtrra notifiche
         }
     }
 
-    public void filtraNotifica(Notifiche t, LayoutInflater inflater){
+    public void filtraNotifica(Notifiche t, LayoutInflater inflater, Notifiche []tmp){
         DatabaseReference richieste = FirebaseDatabase.getInstance().getReference().child("richieste");         //ricavo le richieste per aggiornare i dati
         richieste.addValueEventListener(new ValueEventListener() {                                                       //e passo l'array alla funzione di inserimento
             @Override
@@ -138,7 +138,7 @@ public class NotificationFragment extends Fragment {
                         //}
                     }
                 }
-                addNotifica(t,inflater, r, i);
+                addNotifica(t,inflater, r, i, tmp);
                 richieste.removeEventListener(this);
             }
             @Override
@@ -147,7 +147,7 @@ public class NotificationFragment extends Fragment {
         });
     }
 
-    void addNotifica(Notifiche t, LayoutInflater inflater, Richieste []r, int dim){
+    void addNotifica(Notifiche t, LayoutInflater inflater, Richieste []r, int dim, Notifiche []notifications){
         View v = inflater.inflate(R.layout.layout_notifiche, null);
         int index = 0;
 
@@ -304,22 +304,35 @@ public class NotificationFragment extends Fragment {
                     }
                     richieste.child(t.getIDRichiestaRiferimento()).child("p").child("passeggeri").setValue(array_aggiornato);
 
-                    ArrayList<String> array_notifiche = new ArrayList<>();
-                    array_notifiche = t.getDestinatari();
 
-                    for(int k =0; k < array_notifiche.size(); k++){            //aggiorno l'array dei passeggeri
-                        if(array_notifiche.get(k).equals(user.getUid())){
-                            array_notifiche.set(k, "");
+
+
+
+                    String id_notifica_inserimento = "";
+                    ArrayList<String> destinatari_notifica_inserimento = new ArrayList<>();
+                    for(int k = 0; k < notifications.length; k++){
+                        if(notifications[k].getIDRichiestaRiferimento().equals(t.getIDRichiestaRiferimento()) && t.getDestinatari().get(0).equals(notifications[k].getAutore())){
+                            id_notifica_inserimento = notifications[k].getId();
+                            destinatari_notifica_inserimento = notifications[k].getDestinatari();
                             break;
                         }
                     }
-                    notifiche.child(t.getId()).child("destinatari").setValue(array_notifiche); //CORREGGERE
+
+                    for(int k =0; k < destinatari_notifica_inserimento.size(); k++){            //aggiorno l'array dei passeggeri
+                        if(destinatari_notifica_inserimento.get(k).equals(user.getUid())){
+                            destinatari_notifica_inserimento.set(k, "");
+                            break;
+                        }
+                    }
+
+                    notifiche.child(id_notifica_inserimento).child("destinatari").setValue(destinatari_notifica_inserimento); //CORREGGERE
+
 
 
                     String chiave = notifiche.push().getKey();
                     ArrayList<String> dest = new ArrayList<>();
                     dest.add(t.getDestinatari().get(0));
-                    Notifiche n = new Notifiche("cancellazione_passaggio", user.getUid(), dest, t.getIDRichiestaRiferimento(), chiave, tmp);       //Creo una notifica utile ad avvertire coloro che avevano accettato
+                    Notifiche n = new Notifiche("cancellazione_passaggio", user.getUid(), dest, t.getIDRichiestaRiferimento(), chiave, tmp);
                     notifiche.child(chiave).setValue(n);
                     notifiche.child(t.getId()).removeValue();
 

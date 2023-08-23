@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Autenticazione_v1</string>
+    <string name="app_name">UniCT Sharing</string>
     <string name="login">Login</string>
     <string name="email">email</string>
     <string name="password">Password</string>

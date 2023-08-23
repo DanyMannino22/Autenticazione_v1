@@ -278,6 +278,7 @@ public class NotificationFragment extends Fragment {
                     transaction.commit();
                 }
 
+                //Gestisco caso in cui passeggero vuole cancellare la propria prenotazione
                 else if(t.getTipoNotifica().equals("Accetta_passaggio")){
 
                     System.out.println("Richiesta = " + t.getId());
@@ -290,13 +291,15 @@ public class NotificationFragment extends Fragment {
                         }
                     }
 
-                    numero_attuale = tmp.getPosti_disponibili();                        //incremento il numero di posti disponibili dopo la mia cancellazione
+                    //incremento il numero di posti disponibili dopo la mia cancellazione
+                    numero_attuale = tmp.getPosti_disponibili();
                     richieste.child(t.getIDRichiestaRiferimento()).child("posti_disponibili").setValue(numero_attuale+1);
 
+
+                    //aggiorno l'array dei passeggeri della richiesta
                     ArrayList<String> array_aggiornato = new ArrayList<>();
                     array_aggiornato = tmp.getP().getPasseggeri();
-
-                    for(int k =0; k < array_aggiornato.size(); k++){            //aggiorno l'array dei passeggeri
+                    for(int k =0; k < array_aggiornato.size(); k++){
                         if(array_aggiornato.get(k).equals(user.getUid())){
                             array_aggiornato.set(k, "");
                             break;
@@ -304,10 +307,7 @@ public class NotificationFragment extends Fragment {
                     }
                     richieste.child(t.getIDRichiestaRiferimento()).child("p").child("passeggeri").setValue(array_aggiornato);
 
-
-
-
-
+                    //Ricavo la lista dei destinatari della ntotifica di cancellazione passaggio da parte dell'autista
                     String id_notifica_inserimento = "";
                     ArrayList<String> destinatari_notifica_inserimento = new ArrayList<>();
                     for(int k = 0; k < notifications.length; k++){
@@ -318,17 +318,18 @@ public class NotificationFragment extends Fragment {
                         }
                     }
 
-                    for(int k =0; k < destinatari_notifica_inserimento.size(); k++){            //aggiorno l'array dei passeggeri
+                    //aggiorno l'array dei destinatari di eventuale cancellazione passaggio da parte di autista
+                    for(int k =0; k < destinatari_notifica_inserimento.size(); k++){
                         if(destinatari_notifica_inserimento.get(k).equals(user.getUid())){
                             destinatari_notifica_inserimento.set(k, "");
                             break;
                         }
                     }
 
-                    notifiche.child(id_notifica_inserimento).child("destinatari").setValue(destinatari_notifica_inserimento); //CORREGGERE
+                    notifiche.child(id_notifica_inserimento).child("destinatari").setValue(destinatari_notifica_inserimento);
 
 
-
+                    //Creo la notificache avverte l'autista che il passeggero ha cancellato la propria prenotazione per il passaggio
                     String chiave = notifiche.push().getKey();
                     ArrayList<String> dest = new ArrayList<>();
                     dest.add(t.getDestinatari().get(0));
@@ -336,6 +337,7 @@ public class NotificationFragment extends Fragment {
                     notifiche.child(chiave).setValue(n);
                     notifiche.child(t.getId()).removeValue();
 
+                    //Aggiorno pagina notifiche
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     transaction.replace(R.id.frame_layout, new NotificationFragment());
                     transaction.commit();

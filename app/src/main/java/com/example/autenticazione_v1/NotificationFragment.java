@@ -228,7 +228,7 @@ public class NotificationFragment extends Fragment {
                     });
 
                     testo.setText("Il passaggio accettato per  giorno " + t.getR().getGiorno() + "/" + t.getR().getMese() + "/" +t.getR().getAnno() +
-                            " alle ore " + t.getR().getOra_Partenza() + ":" + t.getR().getMinutiPartenza() + " per la tratta " + t.getR().getPartenza() + "-" + t.getR().getDestinazione() + " è stato rifiutato da ");
+                            " alle ore " + t.getR().getOra_Partenza() + ":" + t.getR().getMinutiPartenza() + " per la tratta " + t.getR().getPartenza() + "-" + t.getR().getDestinazione() + " è stato annullato da ");
                     nNotifiche++;
                     layout.addView(v);
                     break;

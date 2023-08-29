@@ -113,7 +113,7 @@
         app:srcCompat="@drawable/auto" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imagAutista"
         android:layout_width="59dp"
         android:layout_height="46dp"
         android:layout_row="9"

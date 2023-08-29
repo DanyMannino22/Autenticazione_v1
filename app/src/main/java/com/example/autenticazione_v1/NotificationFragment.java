@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class NotificationFragment extends Fragment {
     Richieste []r;
     String nome_passeggero;
     Button cancellaPrenotazione;
+    ImageButton back;
 
 
     public NotificationFragment() {
@@ -92,6 +94,16 @@ public class NotificationFragment extends Fragment {
 
         noNotification = view.findViewById(R.id.nessunaNotifica);
         layout = view.findViewById(R.id.layoutNotifiche);
+        back = view.findViewById(R.id.backNotifiche);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_layout, new HomeFragment());
+                transaction.commit();
+            }
+        });
 
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("notifiche");
         mDatabase.addValueEventListener(new ValueEventListener() {              //estraggo tutte le notifiche presenti sul database

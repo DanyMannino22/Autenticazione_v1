@@ -32,12 +32,12 @@
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="238dp"
+        android:layout_width="199dp"
         android:layout_height="83dp"
         android:layout_row="2"
         android:layout_column="1"
         android:layout_gravity="right"
-        android:gravity="center|right"
+        android:gravity="center"
         android:textSize="20sp" />
 
     <TextView

@@ -26,6 +26,19 @@
         <item>Torre biologica</item>
         <item>Palazzo delle Scienze</item>
         <item>Piazza università</item>
+        <item>Piazza Duomo</item>
+        <item>Villa Bellini</item>
+        <item>Piazza Stesicoro</item>
+        <item>Piazza Borgo</item>
+        <item>Corso Italia</item>
+    </string-array>
+
+    <string-array name="Destinazioni">
+        <item>Cittadella universitaria</item>
+        <item>Monastero Benedettini</item>
+        <item>Torre biologica</item>
+        <item>Palazzo delle Scienze</item>
+        <item>Piazza università</item>
     </string-array>
 
     <string-array name="Ore">

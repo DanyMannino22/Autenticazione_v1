@@ -153,23 +153,8 @@ public class Ricerche extends Fragment {
         int j;
         for(j = 0; j < n; j++){         //Aggiungo richieste compatibili ai filtri applicati
             boolean prenotato = false;
-            /*
-            if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0 && !user.getUid().equals(tmp[j].getAutista())){
-                nRichiesteCompatibili++;
-                addRichiesta(tmp[j], inflater);
-
-            }
-             */
 
             if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0 && !user.getUid().equals(tmp[j].getAutista())) {
-                //int dim = tmp[j].getP().getPasseggeri().isEmpty();
-                //System.out.println(dim);
-                /*for (int i = 0; i < tmp[j].getP().getPasseggeri().size(); i++) {
-                    if (tmp[j].getP().getPasseggeri().get(i).equals(user.getUid())) {
-                        prenotato = true;
-                    }
-                }*/
-                //if(prenotato == false){
 
                 for (int i = 0; i < tmp[j].getP().getPasseggeri().size(); i++) {            //verifico se già prenotato per quella richista
                     if (tmp[j].getP().getPasseggeri().get(i).equals(user.getUid())) {
@@ -182,7 +167,6 @@ public class Ricerche extends Fragment {
                     nRichiesteCompatibili++;
                     addRichiesta(tmp[j], inflater);
                 }
-                //}
             }
         }
 
@@ -281,177 +265,11 @@ public class Ricerche extends Fragment {
                 Notifiche accettazione = new Notifiche("Accetta_passaggio", user.getUid(), accetta, t.getID(), chiave);
                 inserisciNotifica.child(chiave).setValue(accettazione);
 
-                /*notifica.addValueEventListener(new ValueEventListener() {
-
-                    //ArrayList<String> dest;
-                   // String id_notifica;
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {              //aggiungo utente nella lista interessati in caso di cancellazione da parte dell'autista
-                        for(DataSnapshot notifiche : snapshot.getChildren()){
-                            Notifiche n = notifiche.getValue(Notifiche.class);
-                            //System.out.println(n.getIDRichiestaRiferimento());
-
-                            if(n.getIDRichiestaRiferimento().equals(id_richiesta)){
-                                id_notifica = notifiche.getKey();
-                                dest = n.getDestinatari();
-                                System.out.println(id_notifica);
-                                System.out.println(dest.size());
-
-                                for(int k = 0; k < dest.size(); k++) {
-                                    if (dest.get(k).equals("")) {
-                                        dest.set(k, user.getUid());
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-
-                        DatabaseReference modificaRichiesta = FirebaseDatabase.getInstance().getReference().child("notifiche").child(id_notifica).child("destinatari");
-                        modificaRichiesta.setValue(dest);
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-                 */
-
-                /*for(int k = 0; k < dest.size(); k++){
-                    if(dest.get(k).equals("")){
-                        dest.set(k, user.getUid());
-                        break;
-                    }
-                }
-
-                 */
-
-//                notifica.child(id_notifica).child("destinatari").setValue(dest);
-
-
-                //mDatabase.child(t.getID()).child("p").child("passeggeri")
-            /*
-                mDatabase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Passeggeri updated = new Passeggeri();
-                        for (DataSnapshot tmp : snapshot.getChildren()) {
-                            Richieste temp = tmp.getValue(Richieste.class);
-
-                            if (temp.getID().equals(t.getID())) {
-                                System.out.println("TRUE");
-                                int dim = temp.getP().getPasseggeri().size();
-                                ArrayList<String> nuovo = temp.getP().getPasseggeri();
-                                for (int k = 0; k < dim; k++) {
-
-                                    //System.out.println("BREAK");
-
-                                    //   if (temp.getP().getPasseggeri().get(i).equals("")) {
-                                    //      System.out.println("Ciaoooo");
-                                    //     temp.getP().setPasseggero(i, user.getUid());
-                                    //    System.out.println(temp.getP().getPasseggeri());
-                                    //   return;
-                                    //}
-
-
-                                    if (nuovo.get(k).equals("")) {
-                                        nuovo.set(k, user.getUid());
-                                      //  System.out.println("Inserisco");
-                                        break;
-                                    }
-                                }
-                                updated.setPasseggeri(nuovo);
-                                //System.out.println(updated);
-                                temp.setP(updated);
-                                DatabaseReference prova = FirebaseDatabase.getInstance().getReference().child("richieste");
-                                prova.child(t.getID()).child("p").child("passeggeri").setValue(nuovo);
-                                return;
-                            }
-                        }
-
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-              */
-                /*mDatabase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot passegg  : snapshot.getChildren()){
-                            System.out.println(passegg.child("p").child("passeggeri").child("0").getValue());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                 */
-
-               /* mDatabase.child(t.getID()).child("passeggeri");
-                mDatabase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot richieste : snapshot.getChildren()) {
-                            //System.out.println(utenti.getKey());
-                            if(richieste.getValue().equals("")){
-                                System.out.println("Vuoto");
-                            }
-                            //addRichiesta();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            */
-
                 Toast.makeText(getContext(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
 
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack if needed
                 transaction.replace(R.id.frame_layout, new HomeFragment());
-
-// Commit the transaction
                 transaction.commit();
-
-/*
-                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-*/
-
-
-               /* mDatabase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                       for (DataSnapshot r : snapshot.getChildren()) {
-                            if(r.getValue(Richieste.class).getID().equals(t.getID())){
-                                System.out.println(r.getValue(Richieste.class).getID() + " " + t.getID());
-                                r.getValue(Richieste.class).setPosti_didponibili(0);
-                                return;
-                            }
-                        }
-
-                        Toast.makeText(getActivity(), "Passaggio accettato correttamente", Toast.LENGTH_SHORT).show();
-
-                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });*/
             }
         });
         layout.addView(v);

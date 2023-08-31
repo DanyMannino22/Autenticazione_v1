@@ -63,7 +63,7 @@ public class Registration extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+        //verifico se utente è loggato in modo da reindirizzarlo alla MainActivity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -80,6 +80,7 @@ public class Registration extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
+        //Recupero i riferimenti ai campi editText dove l'utente inserisce i propri dati
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         editTextNome = findViewById(R.id.nome);
@@ -103,16 +104,13 @@ public class Registration extends AppCompatActivity {
                         foto = data.getData();
 
                         //inserisco foto sul db nel momento in cui viene cliccato tasto registrati
-                        //poiche se utente decide di cambiare avro 1 foto conservata nel db che non servirà a nulla
-
-                        System.out.println(result);
-                        System.out.println("Foto Caricata");
+                        //poiche se utente decide di cambiare avrò più foto conservata nel db che non servirà a nulla
                     }
                 }
 
         );
 
-        textView.setOnClickListener(new View.OnClickListener() {
+        textView.setOnClickListener(new View.OnClickListener() {     //se utente clicca su "Effettua login" lo reindirizzo alla pagina di login
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), Login.class);
@@ -131,17 +129,16 @@ public class Registration extends AppCompatActivity {
                         ActivityCompat.requestPermissions(Registration.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_MEDIA_CODE);
                 }
                 else {
-                    Intent intent = new Intent();
+                    Intent intent = new Intent();           //setto l'intent per recuperare la foto dalla galleria
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
 
                     takePhoto.launch(intent);
-
                 }
             }
         });
 
-        buttonReg.setOnClickListener(new View.OnClickListener() {
+        buttonReg.setOnClickListener(new View.OnClickListener() {           //al click di "Registrati controllo se i dati rispettano tutti i requisiti
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
@@ -150,25 +147,28 @@ public class Registration extends AppCompatActivity {
                 password = String.valueOf(editTextPassword.getText());
                 String verifyEmail = email;
 
-
+                //se l'email non è stata inserita o se non ha il giusto dominio avviso l'utente
                 if(TextUtils.isEmpty(email) || !verifyEmail.substring(verifyEmail.indexOf("@")+1).equals("studium.unict.it")){
                     Toast.makeText(Registration.this, "Inserisci email universitaria", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     return;
                 }
 
+                //se password non valida avviso l'utente
                 if(TextUtils.isEmpty(password)){
                     Toast.makeText(Registration.this, "Inserisci password valida (min. 6 caratteri)", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     return;
                 }
 
+                //se foto non è stata scelta avviso l'utente
                 if(foto == null){
                     Toast.makeText(Registration.this, "Inserisci foto", Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);
                     return;
                 }
 
+                //se tutto rispetta i vincoli imposti procedo alla creazione dell'utente tramite metodo messo a disposizione da Firebase Authenticate
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -177,11 +177,7 @@ public class Registration extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     String uid = mAuth.getCurrentUser().getUid();  //recupero id utente
 
-
                                     Utente u = new Utente(editTextNome.getText().toString(), editTextCognome.getText().toString(), editTextCellulare.getText().toString(), editTextEmail.getText().toString(), veicolo.isChecked());
-                                    //String email = editTextEmail.getText().toString();
-                                    //int iend = email.indexOf("@");  //uso codice fiscale come id nel db realtime
-                                    //String user_id = email.substring(0 , iend);
 
                                     mDatabase.child("users").child(uid).setValue(u);  //inserisco dati utente nel db realtime
 
@@ -190,45 +186,29 @@ public class Registration extends AppCompatActivity {
                                             .child(
                                                     "images/" + uid);
 
-                                    // adding listeners on upload
-                                    // or failure of image
                                     ref.putFile(foto)
                                             .addOnSuccessListener(
                                                     new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
                                                         @Override
                                                         public void onSuccess(
                                                                 UploadTask.TaskSnapshot taskSnapshot) {
-
-                                                            // Image uploaded successfully
-                                                            // Dismiss dialog
-
-                                                           /* Toast
-                                                                    .makeText(Registration.this,
-                                                                            "Image Uploaded!!",
-                                                                            Toast.LENGTH_SHORT)
-                                                                    .show();*/
                                                         }
                                                     })
-
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
 
                                                     // Error, Image not uploaded
-                                                    Toast
-                                                            .makeText(Registration.this,
-                                                                    "Failed " + e.getMessage(),
-                                                                    Toast.LENGTH_SHORT)
+                                                    Toast.makeText(Registration.this,"Failed " + e.getMessage(),                                                                Toast.LENGTH_SHORT)
                                                             .show();
                                                 }
                                             });
 
+                                    //se tutto va a buon fine avviso utente tramite Toast
                                     Toast.makeText(Registration.this, "Account creato. Effettua login.",
                                             Toast.LENGTH_SHORT).show();
 
                                 } else {
-                                    // If sign in fails, display a message to the user.
                                     Toast.makeText(Registration.this, "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
                                 }

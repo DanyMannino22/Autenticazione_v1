@@ -30,7 +30,7 @@ public class Login extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+        // Verifico se l'utente è loggato; se si lo reindirizzo subito alla MainActivity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -44,13 +44,14 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //Recupero i riferimenti ai campi editText dove l'utente inserisce le credenziali
         mAuth = FirebaseAuth.getInstance();
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         buttonLogin = findViewById(R.id.btn_login);
         progressBar = findViewById(R.id.progressBar);
         textView = findViewById(R.id.registerNow);
-        textView.setOnClickListener(new View.OnClickListener() {
+        textView.setOnClickListener(new View.OnClickListener() {        //se l'utente clicca su Registrati, lo reindirizzo alla pagina di registrazione
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), Registration.class);
@@ -59,7 +60,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        buttonLogin.setOnClickListener(new View.OnClickListener() {         //Al click su login verifico prima se credenziali rispettano i requisiti
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
@@ -77,18 +78,18 @@ public class Login extends AppCompatActivity {
                     return;
                 }
 
-                mAuth.signInWithEmailAndPassword(email, password)
+                mAuth.signInWithEmailAndPassword(email, password)           //utilizzo metodo fornito da Firebase Authentication per verificare identità utente
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    Toast.makeText(getApplicationContext(), "Login succesful", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Login succesful", Toast.LENGTH_SHORT).show();   //se login va a buon fine, utente sarà reindirizzato alla MainActivity
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();
-                                } else {
+                                } else {                                                            //altrimenti verrà avvertito tramite Toast
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(Login.this, "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();
@@ -99,7 +100,6 @@ public class Login extends AppCompatActivity {
         });
     }
 }
-
 
 
 

@@ -44,9 +44,7 @@ public class Prenotazione extends Fragment {
     public String dest, partenza, data;
     private TextView destinazione, visualizzaData;
     private Spinner spinner, spinnerOre, spinnerMinuti, spinnerPosti;
-
     int gg, mm, aaaa;
-
     Button caricaRichiesta, selezionaData;
     String nomeCognome;
     FirebaseUser user;
@@ -100,14 +98,9 @@ public class Prenotazione extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_prenotazione, container, false);
-
-        //mDatabase = FirebaseDatabase.getInstance().getReference("richieste");
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
 
         userReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
@@ -132,13 +125,13 @@ public class Prenotazione extends Fragment {
         //System.out.println(dest);
         destinazione.setText(dest);
 
+        //setto i vari elementi di scelta degli spinner
         spinner = view.findViewById(R.id.spinnerPartenza);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.Partenze, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-
 
         spinnerOre = view.findViewById(R.id.spinnerOre);
         ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.Ore, android.R.layout.simple_spinner_item);
@@ -168,44 +161,34 @@ public class Prenotazione extends Fragment {
         selezionaData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // on below line we are getting
-                // the instance of our calendar.
+
                 final Calendar c = Calendar.getInstance();
 
-                // on below line we are getting
-                // our day, month and year.
                 int year = c.get(Calendar.YEAR);
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
 
-                // on below line we are creating a variable for date picker dialog.
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {  //creo menu per la scelta della data
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
-                                // on below line we are setting date to our text view.
+
                                 visualizzaData.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                                 gg = dayOfMonth;
                                 mm = monthOfYear+1;
                                 aaaa = year;
 
                                 data = gg + "/" + mm + "/" + aaaa;
-                                //Toast.makeText(getContext(), dayOfMonth + "-" + (monthOfYear + 1) + "-" + year, Toast.LENGTH_SHORT).show();
-
                             }
                         },
-                        // on below line we are passing year,
-                        // month and day for selected date in our date picker.
+
                         year, month, day);
-                // at last we are calling show to
-                // display our date picker dialog.
                 datePickerDialog.show();
 
             }
         });
 
-
-        annulla = view.findViewById(R.id.annulla);
+        annulla = view.findViewById(R.id.annulla);              //setto azioni da effettuare al click di annulla
         annulla.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -216,20 +199,18 @@ public class Prenotazione extends Fragment {
 
 
         caricaRichiesta = view.findViewById(R.id.ConfermaDettagli);
-
-        caricaRichiesta.setOnClickListener(new View.OnClickListener() {
+        caricaRichiesta.setOnClickListener(new View.OnClickListener() {         //al click della conferma della prenotaizone verifico se tutti i vincoli sono rispettati
             @Override
             public void onClick(View view) {
                 String part;
-
                 part = spinner.getSelectedItem().toString();
 
-                if(part.equals(dest)){
+                if(part.equals(dest)){          //se partenza coincide cpn destinazione avviso utente
                     Toast.makeText(getContext(), "Partenza e destinazione non possono coincidere", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if(aaaa < prova.get(Calendar.YEAR)){
+                if(aaaa < prova.get(Calendar.YEAR)){           //se data antecedente a quella attuale avviso utente
                     Toast.makeText(getContext(), "Seleziona una data valida", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -244,10 +225,8 @@ public class Prenotazione extends Fragment {
                     }
                 }
 
-                //Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), Integer.parseInt(spinnerPosti.getSelectedItem().toString()), nomeCognome, "");
-
-                idReference = mDatabase.child("richieste");
-                String key = idReference.push().getKey(); //This is the value of your key
+                idReference = mDatabase.child("richieste");         //creo richiesta tramite push
+                String key = idReference.push().getKey();
 
 
                 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -262,66 +241,30 @@ public class Prenotazione extends Fragment {
 
                 Notifiche n = new Notifiche("inserimento", user.getUid(), destinatari, key, chiave);       //Uso la chiave della richiesta in modo da poter aggiungere o eliminare destinatari di eventuuali cancellazioni o cambiamenti della richiesta
                 inserisciNotifica.child(chiave).setValue(n);
-
                 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
-                //HashMap<String, String> passeggeri = new HashMap<String, String>();
-                /*for(int i = 0; i < Integer.parseInt(spinnerPosti.getSelectedItem().toString()); i++){
-                    passeggeri.put("passeggero"+(i+1), "");
-                }*/
-
-                ArrayList<String> lista = new ArrayList<String>();
+                ArrayList<String> lista = new ArrayList<String>();          //modifico lista dei passeggeri
                 for(int i = 0; i < Integer.parseInt(spinnerPosti.getSelectedItem().toString()); i++){
                     lista.add("");
                 }
                 Passeggeri passeggeri = new Passeggeri(lista);
 
                 Richieste r = new Richieste(user.getUid(), part, dest, Integer.parseInt(spinnerPosti.getSelectedItem().toString()), Integer.parseInt(spinnerOre.getSelectedItem().toString()), Integer.parseInt(spinnerMinuti.getSelectedItem().toString()), nomeCognome, key, gg, mm, aaaa, passeggeri);
-                idReference.child(key).setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
+                idReference.child(key).setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {       //assegno i valori inseriti dall'utente alla richiesta creata tramite push
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(getActivity().getApplicationContext(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
 
-                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack if needed
+                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();        //se va a buon fine, avviso l'utente con un Taost e lo reindirizzo all'HomeFragment
                         transaction.replace(R.id.frame_layout, new HomeFragment());
-// Commit the transaction
                         transaction.commit();
-/*
-                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
-
- */
                     }
                 });
-
-                /*mDatabase.push().setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getActivity(), "Richiesta creata correttamente", Toast.LENGTH_SHORT).show();
-
-
-
-
-                        Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Errore durante caricamento richiesta", Toast.LENGTH_SHORT).show();
-                    }
-                });*/
             }
         });
 
         return view;
     }
-
     public void onItemsObtained(Utente temp) {
         nomeCognome = temp.getNome() + " " + temp.getCognome();
     }

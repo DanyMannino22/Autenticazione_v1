@@ -67,11 +67,11 @@ public class Ricerche extends Fragment {
     DatabaseReference mDatabase, acceptReference;
     Utente u;
     String destinazione, partenza, oraInizio, oraFine;
+    int giorno, mese, anno;
     ArrayList<String> dest;
     LinearLayout layout;
     int cont, nRichiesteCompatibili = 0;
     Richieste []r;
-    Utente infoAutista;
     Notifiche []n;
     TextView noResult;
     FirebaseStorage storage;
@@ -120,6 +120,7 @@ public class Ricerche extends Fragment {
         layout = view.findViewById(R.id.layout_ricerche);
         noResult = view.findViewById(R.id.nessunRisultato);
 
+        //recupero tutte le informazioni inviate dalla pagina del filtro
         Bundle b = this.getArguments();                 //setta automaticamente la destinazione scelta nella mappa e non la rende modificabile
         partenza = b.getString("partenza", partenza);
         System.out.println(partenza);
@@ -132,24 +133,24 @@ public class Ricerche extends Fragment {
 
         oraFine = b.getString("oraFine", oraFine);
         System.out.println(oraFine);
-        //destinazione.setText(dest);
+
+        giorno = b.getInt("giorno", giorno);
+        mese = b.getInt("mese", mese);
+        anno = b.getInt("anno", anno);
+
 
         acceptReference = FirebaseDatabase.getInstance().getReference("richieste");
-
-
         mDatabase = FirebaseDatabase.getInstance().getReference("richieste");
 
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDatabase.addValueEventListener(new ValueEventListener() {      //Recupero tutte le richieste sul database
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 cont = (int) snapshot.getChildrenCount();
                 r = new Richieste[cont];
                 int i = 0;
                 for (DataSnapshot richieste : snapshot.getChildren()) {
-                    //System.out.println(utenti.getKey());
                         r[i] = richieste.getValue(Richieste.class);
                         i++;
-                    //addRichiesta();
                 }
 
                 Ricerche.this.onItemObtained(r, cont, inflater);
@@ -170,7 +171,7 @@ public class Ricerche extends Fragment {
         for(j = 0; j < n; j++){         //Aggiungo richieste compatibili ai filtri applicati
             boolean prenotato = false;
 
-            if(tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0 && !user.getUid().equals(tmp[j].getAutista())) {
+            if(tmp[j].getGiorno() == giorno && tmp[j].getMese() == mese && tmp[j].getAnno() == anno && tmp[j].getPartenza().equals(partenza) && tmp[j].getDestinazione().equals(destinazione) && (tmp[j].getOra_Partenza() >= Integer.parseInt(oraInizio)) && tmp[j].getOra_Partenza() < Integer.parseInt(oraFine) && tmp[j].getPosti_disponibili() > 0 && !user.getUid().equals(tmp[j].getAutista())) {
 
                 for (int i = 0; i < tmp[j].getP().getPasseggeri().size(); i++) {            //verifico se già prenotato per quella richista
                     if (tmp[j].getP().getPasseggeri().get(i).equals(user.getUid())) {
@@ -187,24 +188,17 @@ public class Ricerche extends Fragment {
         }
 
         if(nRichiesteCompatibili == 0){     //Se non ci sono richieste compatibili compare un messaggio che avverte utente
-            //RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            //TextView text = new TextView(this.getContext());
             noResult.setLayoutParams(p);
             noResult.setHeight(110);
             noResult.setTextSize(20);
             noResult.setPadding(10, 15,0, 0);
 
-
             noResult.setText("Nessuna richiesta compatibile trovata");
-
-            //layout.addView(noResult);
             return;
         }
 
     }
-
-
     public void addRichiesta(Richieste t, LayoutInflater inflater){
         View v = inflater.inflate(R.layout.layout_richieste, null);
 
@@ -225,6 +219,7 @@ public class Ricerche extends Fragment {
             }
         });
 
+       //setto i vari campi della richiesta da visualizzare
         TextView partenza = v.findViewById(R.id.partenzaRicerca);
         partenza.setText(t.getPartenza());
 
@@ -241,15 +236,12 @@ public class Ricerche extends Fragment {
         data.setText(" " + t.getGiorno() + "/" + t.getMese() + "/" + t.getAnno());
 
         Button b = v.findViewById(R.id.accettaPassaggio);
-        b.setOnClickListener(new View.OnClickListener() {
+        b.setOnClickListener(new View.OnClickListener() {       //se clicco su accetta passaggio
             @Override
             public void onClick(View view) {
-                //System.out.println(t.getAutista());
                 int temp = t.getPosti_disponibili();
 
                 mDatabase.child(t.getID()).child("posti_disponibili").setValue(temp-1);    //abbasso numero passeggeri della richiesta
-
-
                 ArrayList<String> nuovo = t.getP().getPasseggeri();         //aggiorno la lista dei passeggeri aggiungendo il nuovo utente
                 for(int i = 0; i < nuovo.size(); i++){
                     if(nuovo.get(i).equals("")){
@@ -262,10 +254,7 @@ public class Ricerche extends Fragment {
                 p.setPasseggeri(nuovo);
                 mDatabase.child(t.getID()).child("p").setValue(p);
 
-                //System.out.println(t.getID());
-                //System.out.println(id_richiesta);
-
-                DatabaseReference notifica = FirebaseDatabase.getInstance().getReference().child("notifiche");    //creo le notifiche
+                DatabaseReference notifica = FirebaseDatabase.getInstance().getReference().child("notifiche");    //creo le notifiche per autista e passeggero
                 notifica.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -275,7 +264,6 @@ public class Ricerche extends Fragment {
                         for(DataSnapshot notifiche : snapshot.getChildren()){
                             n[i] = notifiche.getValue(Notifiche.class);
                             i++;
-                            System.out.println("Ciaoo");
                         }
 
                         aggiornaDestinatari(n, cont_n, t.getID());
@@ -289,6 +277,7 @@ public class Ricerche extends Fragment {
                 });
 
 
+                //inserisco notifiche sul database
                 DatabaseReference inserisciNotifica = notifica;
                 String chiave = inserisciNotifica.push().getKey();
 
@@ -308,7 +297,7 @@ public class Ricerche extends Fragment {
         layout.addView(v);
     }
 
-    public void aggiornaDestinatari(Notifiche []n, int dim, String id_richiesta){
+    public void aggiornaDestinatari(Notifiche []n, int dim, String id_richiesta){   //aggiorno i destinatari della notifica di inserimento dell'autista per un eventuale cancellazione dello stesso
         String id_notifica = "";
         ArrayList<String> dest = new ArrayList<>();
 
@@ -319,7 +308,6 @@ public class Ricerche extends Fragment {
                 break;
             }
         }
-
         for(int i = 0; i < dest.size(); i++){
             if (dest.get(i).equals("")) {
                 dest.set(i, user.getUid());

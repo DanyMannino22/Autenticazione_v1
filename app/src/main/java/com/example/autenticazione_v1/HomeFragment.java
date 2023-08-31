@@ -93,13 +93,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-        */
 
-        auth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();          //recupero utente corrente
         user = auth.getCurrentUser();
 
         //inizializzo osm
@@ -110,31 +105,18 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
         //Inserisco mappa all'interno del fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         MapView map = (MapView) view.findViewById(R.id.mapView);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());    //Verifico se utente ha macchina disponibile
+        mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());    //Verifico se utente ha macchina disponibile tramite recupero dei dati online
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                /*for(DataSnapshot utenti : snapshot.getChildren()){
-                    //System.out.println(utenti.getKey());
-                    if(utenti.getKey().equals(user.getUid())){
-                        u = utenti.getValue(Utente.class);          //prendo riferimento utente loggato
-                        //System.out.println(u.getNome());
-                        //tmp = snapshot.getValue(Utente.class);
-                        break;
-                    }
-                }*/
 
-
-                //u = snapshot.getChildren(user_id);
-                u = snapshot.getValue(Utente.class);
-
+                u = snapshot.getValue(Utente.class);            //recupero l'oggetto utente attuale
                 HomeFragment.this.onItemsObtained(u);           //uso questa funzione per evitare di ottenere oggetto null
             }
             @Override
@@ -191,7 +173,6 @@ public class HomeFragment extends Fragment {
         ItemizedOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(overlayItemArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
             @Override
             public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
-               //Toast.makeText(getActivity(), "Località : "+overlayItem.getTitle() /*+"\nItem's Desc : "+overlayItem.getSnippet()*/, Toast.LENGTH_SHORT).show();
 
                 AlertDialog dialog = new AlertDialog.Builder(getActivity())
                         .setTitle("Scegli attività")
@@ -200,14 +181,14 @@ public class HomeFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
 
-                                if(!MACCHINA_DISPONIBILE){
+                                if(!MACCHINA_DISPONIBILE){      //verifico se l'utente ha la macchina disponibile
                                     Toast.makeText(getActivity(), "Macchina non disponibile, cambia impostazioni", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
 
                                 dialogInterface.dismiss();
                                 destinazione = overlayItem.getTitle();
-                                replaceFragment(new Prenotazione());
+                                replaceFragment(new Prenotazione());        //reindirizzo l'utente alla pagina per creare la prenotazione
                             }
                         })
                         .setNegativeButton("Ricerca Passaggio", new DialogInterface.OnClickListener() {
@@ -216,7 +197,7 @@ public class HomeFragment extends Fragment {
                                 dialogInterface.dismiss();
                                 Toast.makeText(getActivity(), "Ricerca Passaggio", Toast.LENGTH_SHORT).show();
                                 destinazione = overlayItem.getTitle();
-                                replaceFragment(new FiltroRicerche());
+                                replaceFragment(new FiltroRicerche());    //reindirizzo l'utente alla pagina per creare la richiesta
                             }
                         })
 
@@ -238,24 +219,23 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void replaceFragment(Fragment fragment){            //funzione che effettua il cambio del fragment al click di macchina disponibile
+    private void replaceFragment(Fragment fragment){            //funzione che effettua il cambio del fragment al click di macchina disponibile e ricerca passaggio
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         Bundle b = new Bundle();
-        b.putString("key", destinazione);
+        b.putString("key", destinazione);           //passo alla pagina di destinazione la destinazione del passaggio da cercare o che si vuole creare
         fragment.setArguments(b);
         fragmentTransaction.commit();
     }
 
     public void onItemsObtained(Utente temp) {
         if(temp.getDisponibilitaVeicolo()){
-            MACCHINA_DISPONIBILE = true;
+           MACCHINA_DISPONIBILE = true;
         }
     }
 
     public void onDestroy() {
         super.onDestroy();
     }
-
 }

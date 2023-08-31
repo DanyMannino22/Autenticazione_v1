@@ -43,7 +43,6 @@ public class ProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     ImageView profilePic;
     FirebaseUser user;
     FirebaseAuth auth;
@@ -55,20 +54,10 @@ public class ProfileFragment extends Fragment {
     Utente u, tmp;
     Bitmap bmp;
 
-
-
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
@@ -81,27 +70,16 @@ public class ProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();  //prende il current user
-
-        //System.out.println(user.getEmail());
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        String email = user.getEmail();     //ricavo inforamzioni utente per accedere ai dati sul db
-        int iend = email.indexOf("@");
-        String user_id = email.substring(0 , iend);   //ID utente
-        //String us_id = user_id.substring(0, 1).toUpperCase() + user_id.substring(1);
-
-
-        //System.out.println(path);
         final long DIM = 2048*2048;
-        storage = FirebaseStorage.getInstance();     //sistema i riferimenti per accedere ai dati del db da riportare nelle info
-        mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+        storage = FirebaseStorage.getInstance();     //sistema i riferimenti per accedere alla profile pic nello storage
+        mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());      //sistema i riferimenti per accedere ai dati del database
         storageReference = storage.getReference("images/"+user.getUid());
 
         profilePic = view.findViewById(R.id.profilePict);
@@ -122,20 +100,8 @@ public class ProfileFragment extends Fragment {
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                /*for(DataSnapshot utenti : snapshot.getChildren()){
-                    //System.out.println(utenti.getKey());
-                    if(utenti.getKey().equals(user.getUid())){
-                        u = utenti.getValue(Utente.class);          //prendo riferimento utente loggato
-                        //System.out.println(u.getNome());
-                        //tmp = snapshot.getValue(Utente.class);
-                        break;
-                    }
-                }*/
 
-
-                //u = snapshot.getChildren(user_id);
-                u = snapshot.getValue(Utente.class);
-
+                u = snapshot.getValue(Utente.class);                //ricavo l'utente interessato
                 ProfileFragment.this.onItemsObtained(u);           //uso questa funzione per evitare di ottenere oggetto null
             }
             @Override
@@ -144,18 +110,13 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-
-       // System.out.println(u.getNome());
-       // System.out.println(u.getNome());
-
         textNome = view.findViewById(R.id.casellaNome);
         textCellulare = view.findViewById(R.id.casellaCellulare);
         textMail = view.findViewById(R.id.casellaMail);
         textAuto = view.findViewById(R.id.casellaAuto);
         back = view.findViewById(R.id.tastoBack);
 
-
-        back.setOnClickListener(new View.OnClickListener() {
+        back.setOnClickListener(new View.OnClickListener() {        //setto tasto Back
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
@@ -163,18 +124,14 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        //System.out.println(u.getNome());
-       //t.setText("Nome : " + u.getNome());
-        //profilePic.setImageBitmap();
-
-        //return inflater.inflate(R.layout.fragment_profile, container, false);
         return view;
     }
 
     public void onItemsObtained(Utente temp){
         String email;
         tmp = temp;
-        //System.out.println(user.getUid());                //aggiorno campi con dati utente
+
+        //Visualizzo i dati dell'utente
         textNome.setText(tmp.getNome() + " " + tmp.getCognome());
         textCellulare.setText(tmp.getCellulare());
 

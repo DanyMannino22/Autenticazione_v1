@@ -55,9 +55,7 @@ public class SettingsFragment extends Fragment {
     ImageButton back;
     DatabaseReference mDatabase;
 
-
     public SettingsFragment() {
-        // Required empty public constructor
     }
 
     /**
@@ -88,24 +86,19 @@ public class SettingsFragment extends Fragment {
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();  //prende il current user
-        //System.out.println(user.getEmail());
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-
-        // Inflate the layout for this fragment
         final long DIM = 2048*2048;
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         mDatabase = FirebaseDatabase.getInstance().getReference("users").child(user.getUid()).child("disponibilitaVeicolo");
 
         back = view.findViewById(R.id.tastoBack2);
-        back.setOnClickListener(new View.OnClickListener() {
+        back.setOnClickListener(new View.OnClickListener() {    //setto tasto Back
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
@@ -114,8 +107,7 @@ public class SettingsFragment extends Fragment {
         });
 
         changeSettings = view.findViewById(R.id.CambiaImpostazioni);
-
-        changeSettings.setOnClickListener(new View.OnClickListener() {
+        changeSettings.setOnClickListener(new View.OnClickListener() {      //se utente clicca su "cambia impostazioni" appare finestra di dialog
             @Override
             public void onClick(View view) {
                 AlertDialog dialog = new AlertDialog.Builder(getActivity())
@@ -123,7 +115,7 @@ public class SettingsFragment extends Fragment {
                         .setMessage("Seleziona disponibilità auto")
                         .setPositiveButton("Disponibile", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                            public void onClick(DialogInterface dialogInterface, int i) {       //tramite riferimento all0istanza del database dsetto macchina disponibile a true
                                 dialogInterface.dismiss();
                                 mDatabase.setValue(true);
                                 Toast.makeText(getActivity(), "Modifica effettuata con successo", Toast.LENGTH_SHORT).show();
@@ -132,7 +124,7 @@ public class SettingsFragment extends Fragment {
                         })
                         .setNegativeButton("NON Disponibile", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                            public void onClick(DialogInterface dialogInterface, int i) {     //altrimenti la setto a false
                                 dialogInterface.dismiss();
                                 mDatabase.setValue(false);
                                 Toast.makeText(getActivity(), "Modifica effettuata con successo", Toast.LENGTH_SHORT).show();
@@ -141,7 +133,6 @@ public class SettingsFragment extends Fragment {
                         })
 
                         .create();
-
                 dialog.show();
             }
         });
@@ -154,20 +145,14 @@ public class SettingsFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity().getApplicationContext(), Login.class);
                 startActivity(intent);
-                getActivity().finish();
+                getActivity().finish();     //utile perche se dopo essere reindirizzato al login utente preme tasto back viene riportato alla pagina settings
             }
         });
 
-        String id = user.getEmail();
-        profilePic = getActivity().findViewById(R.id.ProPict);
-        t = view.findViewById(R.id.textView3);
-        t.setText(id.substring(0, id.indexOf("@")));
-
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference("images/"+user.getUid());
-
+        //recupero immagine profilo
         profilePic = view.findViewById(R.id.ProPict);
-
         storageReference.getBytes(DIM).addOnSuccessListener(new OnSuccessListener<byte[]>() {    //Scarico foto profilo utente
             @Override
             public void onSuccess(byte[] bytes) {
@@ -181,12 +166,6 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-
-
-
-        //profilePic.setImageBitmap();
-
-        //return inflater.inflate(R.layout.fragment_settings, container, false);
         return view;
     }
 }

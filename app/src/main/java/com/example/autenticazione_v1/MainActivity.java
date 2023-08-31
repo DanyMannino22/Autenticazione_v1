@@ -16,19 +16,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
-
     FirebaseAuth auth;
     ActivityMainBinding binding;
-    //Button button;
-    //TextView textView;
     FirebaseUser user;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());  //Strumento che permette di associale i layout all'oggetto
-        //setContentView(R.layout.activity_main);
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());            //di default apre il fragmento della home
 
@@ -47,17 +42,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.notifications:
                     replaceFragment(new NotificationFragment());
-
             }
 
             return true;
         });
 
-
         auth = FirebaseAuth.getInstance();
-        //button = findViewById(R.id.logout);
-        //textView = findViewById(R.id.user_details);
-
         user = auth.getCurrentUser();  //prende il current user
 
         if(user == null){     //se user non loggato apre login
@@ -65,24 +55,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
-
-        /*else{   //altrimenti mostra email dell'utente
-            textView.setText(user.getEmail());
-        }
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {    //logut utente con ritorno alla schermata login
-                FirebaseAuth.getInstance().signOut();
-
-                Intent intent = new Intent(getApplicationContext(), Login.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-         */
     }
 
     private void replaceFragment(Fragment fragment){            //funzione che effettua il cambio del fragment al click
@@ -91,5 +63,4 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
-
 }

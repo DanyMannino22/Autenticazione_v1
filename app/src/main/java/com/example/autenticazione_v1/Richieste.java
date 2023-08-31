@@ -8,11 +8,7 @@ public class Richieste {
     private String autista, passeggero, passeggero3, passeggero4, partenza, destinazione, nomeAutista,  ID;
     private int posti_auto, ora_Partenza, minutiPartenza, posti_disponibili;
     private int giorno, mese, anno;
-
-    //private HashMap<String, String> passeggeri;
-
     Passeggeri p;
-
     public Passeggeri getP() {
         return p;
     }

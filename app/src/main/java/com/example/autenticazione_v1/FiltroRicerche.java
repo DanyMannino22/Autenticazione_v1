@@ -86,7 +86,7 @@ public class FiltroRicerche extends Fragment {
         //System.out.println(dest);
         destinazione.setText(dest);
 
-        partenza = view.findViewById(R.id.filtroPartenza);
+        partenza = view.findViewById(R.id.filtroPartenza);          //assegno le varie opzioni agli elementi "Spinner"
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.Partenze, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -107,55 +107,39 @@ public class FiltroRicerche extends Fragment {
         // Apply the adapter to the spinner
         oraFine.setAdapter(adapter3);
 
-        annulla = view.findViewById(R.id.filtroAnnulla);
+        annulla = view.findViewById(R.id.filtroAnnulla);            //click per tornare all'HomeFragment
         annulla.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-// Replace whatever is in the fragment_container view with this fragment,
-// and add the transaction to the back stack if needed
                 transaction.replace(R.id.frame_layout, new HomeFragment());
-// Commit the transaction
                 transaction.commit();
             }
         });
 
         visualizzaData = view.findViewById(R.id.filtroData);
         selezData = view.findViewById(R.id.selezDataFiltro);
-        selezData.setOnClickListener(new View.OnClickListener() {
+        selezData.setOnClickListener(new View.OnClickListener() {           //aggiunta del menu per selezionare data al click di "Seleziona Data"
             @Override
             public void onClick(View v) {
-                // on below line we are getting
-                // the instance of our calendar.
-                final Calendar c = Calendar.getInstance();
 
-                // on below line we are getting
-                // our day, month and year.
+                final Calendar c = Calendar.getInstance();
                 int year = c.get(Calendar.YEAR);
                 int month = c.get(Calendar.MONTH);
                 int day = c.get(Calendar.DAY_OF_MONTH);
-
-                // on below line we are creating a variable for date picker dialog.
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-                        // on below line we are setting date to our text view.
                         visualizzaData.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                         gg = dayOfMonth;
                         mm = monthOfYear+1;
                         aaaa = year;
 
-                        //Toast.makeText(getContext(), dayOfMonth + "-" + (monthOfYear + 1) + "-" + year, Toast.LENGTH_SHORT).show();
-
                     }
                 },
-                        // on below line we are passing year,
-                        // month and day for selected date in our date picker.
                         year, month, day);
-                // at last we are calling show to
-                // display our date picker dialog.
                 datePickerDialog.show();
 
             }
@@ -164,21 +148,21 @@ public class FiltroRicerche extends Fragment {
         cerca = view.findViewById(R.id.bottoneRicerca);
         cerca.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) {                //prima di reindirizaare utente alla pagina successiva verifico i vincoli imposti
 
                 part = partenza.getSelectedItem().toString();
 
-                if(part.equals(dest)){
+                if(part.equals(dest)){          //se partenza e destinazione coincidono avviso l'utente
                     Toast.makeText(getActivity(), "Partenza e destinazione non possono coincidere", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if(Integer.parseInt(oraInizio.getSelectedItem().toString()) >= Integer.parseInt(oraFine.getSelectedItem().toString())){
+                if(Integer.parseInt(oraInizio.getSelectedItem().toString()) >= Integer.parseInt(oraFine.getSelectedItem().toString())){         //Se fascia oraria non valida avviso l'utente
                     Toast.makeText(getActivity().getApplicationContext(), "Orario fascia non valido", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if(aaaa < prova.get(Calendar.YEAR)){
+                if(aaaa < prova.get(Calendar.YEAR)){            //se data passata avviso l'utente
                     Toast.makeText(getActivity().getApplicationContext(), "Seleziona una data valida", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -196,7 +180,6 @@ public class FiltroRicerche extends Fragment {
                 inizio = oraInizio.getSelectedItem().toString();
                 fine = oraFine.getSelectedItem().toString();
 
-                //System.out.println("OK");
                 replaceFragment(new Ricerche());
             }
         });
@@ -205,7 +188,7 @@ public class FiltroRicerche extends Fragment {
     }
 
     private void replaceFragment(Fragment fragment){            //funzione che effettua il cambio del fragment al click del bottone
-        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentManager fragmentManager = getParentFragmentManager();               //INVIO I DATI DEL FILTRO ALLA PAGINA "RICERCHE" TRAMITE BUNDLE
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         Bundle b = new Bundle();
@@ -213,6 +196,9 @@ public class FiltroRicerche extends Fragment {
         b.putString("partenza", part);
         b.putString("oraInizio", inizio);
         b.putString("oraFine", fine);
+        b.putInt("giorno", gg);
+        b.putInt("mese", mm);
+        b.putInt("anno", aaaa);
         fragment.setArguments(b);
         fragmentTransaction.commit();
     }
